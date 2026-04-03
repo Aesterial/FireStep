@@ -1,0 +1,4 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+/kenney_city-kit-industrial_1.0

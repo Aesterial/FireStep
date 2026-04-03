@@ -1,0 +1,127 @@
+You are working inside a fresh Godot project repository.
+
+Goal:
+Build a small, playable Godot MVP for a case-study called “VR in production”, but implement it as a keyboard/mouse 3D simulator, not real XR. The purpose is to demonstrate the required training logic, not to build a polished game.
+
+Important constraints from the case:
+- The project must teach correct behavior when signs of industrial equipment fire appear.
+- The player is an operator of a machine.
+- The scenario must be short, interactive, and evaluable.
+- Minimum 3 interactive user actions.
+- Minimum 1 wrong action with visible consequences.
+- Minimum 1 successful path.
+- Clear feedback via text/icons/sound-like cues or strong UI feedback.
+- Hints/arrows/tutorial mode are allowed.
+- Godot is allowed.
+- Free assets and engine primitives are allowed.
+- Fully finished training templates with built-in educational logic are forbidden.
+
+Implementation choice for this MVP:
+- Use Godot 4.x Standard + GDScript only.
+- Do NOT use XR or VR headset support.
+- Build a first-person 3D scene controlled by mouse + keyboard.
+- Use engine primitives and simple materials instead of downloaded assets unless assets already exist in repo.
+- Keep scope intentionally tiny and robust.
+
+Scenario to implement:
+- Location: a small industrial room / workshop area.
+- Machine: industrial compressor or generator (stationary machine, easier than a vehicle).
+- The player starts as the machine operator near the equipment.
+- Early signs of danger appear: smoke + warning indicator.
+- The project must teach that human safety and evacuation have priority over saving equipment.
+
+Required interaction design:
+1) Player notices the warning and can interact with an emergency stop.
+2) Player must move to a marked safe distance / safe zone.
+3) Player must choose the next action from a small decision UI:
+   - raise alarm / call for help
+   - evacuate
+   - try to save equipment / ignore the danger
+4) At least one clearly wrong path must lead to failure and consequences.
+5) At least one clearly correct path must lead to success.
+
+Recommended training logic:
+- Correct path:
+  a) detect smoke/warning,
+  b) activate emergency stop,
+  c) move to safe zone,
+  d) raise alarm / call for help,
+  e) evacuate through marked exit.
+- Wrong path examples:
+  - ignore warning,
+  - stay too close to the machine,
+  - prioritize saving the machine over evacuation.
+- The failure result should show that the fire intensifies / danger increases.
+- The success result should clearly state that people safety and evacuation were prioritized.
+
+Important safety note:
+Treat this as an educational prototype for a hackathon/case demo, not as authoritative real-world industrial safety guidance. Avoid presenting niche real-world claims. Keep language generic and focused on the case requirements.
+
+What to build:
+1) A minimal playable Godot project.
+2) One main scene.
+3) A simple first-person controller.
+4) Interactable objects:
+   - machine
+   - emergency stop
+   - safe zone marker
+   - alarm/help point or UI action
+   - exit zone
+5) UI:
+   - tutorial hints
+   - interaction prompts
+   - feedback messages
+   - success/failure screen
+6) A simple state machine for scenario progression.
+7) A short README with:
+   - how to open/run the project
+   - controls
+   - scenario flow
+   - what was intentionally simplified
+8) A docs/TEST_PLAN.md with a manual acceptance checklist.
+9) A docs/ASSETS.md listing all used assets and sources. If only engine primitives and built-in UI are used, explicitly say that no third-party assets were required.
+
+Code and structure requirements:
+- Prefer clarity over cleverness.
+- Keep files few and simple.
+- Use descriptive node/script names.
+- Add short comments only where helpful.
+- Avoid unnecessary plugins/addons/dependencies.
+- If a validation command is available, run it.
+- If Godot CLI/headless validation is available, use it.
+- If not available, explain what could not be validated and provide manual verification steps.
+- Do not add unrelated polish.
+
+Suggested project structure:
+- scenes/Main.tscn
+- scripts/main.gd
+- scripts/player_controller.gd
+- scripts/interactable.gd
+- scripts/scenario_state.gd
+- ui/HUD.tscn
+- ui/hud.gd
+- docs/TEST_PLAN.md
+- docs/ASSETS.md
+- README.md
+
+Concrete gameplay requirements:
+- Minimum 3 user interactions must be genuinely interactive, not just walking.
+- Minimum 1 wrong action must visibly change outcome.
+- Minimum 1 successful route must be finishable in under 2–3 minutes.
+- Feedback must be obvious and readable.
+- Tutorial mode should be ON by default.
+
+Visual style:
+- Minimalistic prototype style is acceptable.
+- Use colored primitives, floor markings, warning colors, labels, and simple icons made from UI where needed.
+- Prioritize readability for demoing.
+
+Your workflow:
+1) Inspect repository.
+2) Create/update files needed for the MVP.
+3) Keep the design minimal.
+4) Run whatever checks are realistically possible.
+5) Update README and docs.
+6) Summarize exactly what was built, what is playable, and what still must be tested manually.
+
+Do the work directly in the repo.

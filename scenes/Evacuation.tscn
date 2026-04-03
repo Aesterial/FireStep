@@ -1,0 +1,43 @@
+[gd_scene format=3 uid="uid://c68ena835qs65"]
+
+[ext_resource type="Script" uid="uid://c185xnpnl8wdu" path="res://scripts/evacuation_scene.gd" id="1_evac"]
+[ext_resource type="Script" uid="uid://cj84ls22wl83i" path="res://scripts/player_controller.gd" id="2_player"]
+[ext_resource type="PackedScene" path="res://ui/HUD.tscn" id="3_hud"]
+[ext_resource type="PackedScene" uid="uid://6y5al5xukgwx" path="res://assets/models/building-b.glb" id="4_corridor"]
+[ext_resource type="PackedScene" uid="uid://cqquorbfb7bi1" path="res://assets/models/chimney-small.glb" id="5_assembly"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.35
+height = 1.2
+
+[node name="Evacuation" type="Node3D" unique_id=854712822]
+script = ExtResource("1_evac")
+corridor_visual_scene = ExtResource("4_corridor")
+assembly_visual_scene = ExtResource("5_assembly")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=259658065]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1435814523]
+transform = Transform3D(0.95105654, -0.2296444, 0.20677271, 0, 0.66913056, 0.74314487, -0.309017, -0.7067728, 0.636381, 0, 0, 0)
+light_energy = 1.5
+shadow_enabled = true
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=36893049]
+script = ExtResource("2_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=22941440]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="Head" type="Node3D" parent="Player" unique_id=45707699]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.55, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Player/Head" unique_id=968218943]
+current = true
+
+[node name="RayCast3D" type="RayCast3D" parent="Player/Head/Camera3D" unique_id=982272760]
+target_position = Vector3(0, 0, -4)
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="HUD" parent="." unique_id=1211796523 instance=ExtResource("3_hud")]
