@@ -1,9 +1,9 @@
 extends Node3D
 
 const Interactable = preload("res://scripts/interactable.gd")
-const FLOOR_TEXTURE: Texture2D = preload("res://assets/textures/variation-c.png")
-const WALL_TEXTURE: Texture2D = preload("res://assets/textures/variation-a.png")
-const CEILING_TEXTURE: Texture2D = preload("res://assets/textures/variation-b.png")
+const FLOOR_TEXTURE: Texture2D = preload("res://assets/textures/prototype/dark_04.png")
+const WALL_TEXTURE: Texture2D = preload("res://assets/textures/prototype/light_04.png")
+const CEILING_TEXTURE: Texture2D = preload("res://assets/textures/prototype/dark_02.png")
 const DETAIL_TANK_SCENE: PackedScene = preload("res://assets/models/detail-tank.glb")
 const CHIMNEY_SMALL_SCENE: PackedScene = preload("res://assets/models/chimney-small.glb")
 const CHIMNEY_MEDIUM_SCENE: PackedScene = preload("res://assets/models/chimney-medium.glb")
@@ -339,7 +339,7 @@ func _build_exit(parent: Node3D) -> void:
 	exit_panel = _make_interactable_panel(
 		"ExitPanel",
 		"exit",
-		"[E] Выйти из цеха",
+		"Выйти из цеха",
 		Vector3(-6.72, 1.15, -0.35),
 		Vector3(0.25, 0.52, 0.52),
 		exit_panel_material,
@@ -416,6 +416,7 @@ func _on_result_requested(success: bool, title: String, body: String) -> void:
 		hud.show_feedback("Переход к резервному генератору...", "info")
 		_queue_scene_change("res://scenes/SecondaryGenerator.tscn", 0.9)
 	else:
+		GameSession.add_error()
 		GameSession.set_final_result(
 			false,
 			title,
@@ -443,6 +444,7 @@ func _apply_visual_state(state: String) -> void:
 			smoke_target = 0.38
 			machine_color_target = Color(0.28, 0.33, 0.38)
 			emergency_stop_material.albedo_color = Color(0.58, 0.12, 0.1)
+			emergency_stop_material.emission = Color(0.58, 0.12, 0.1)
 			safe_zone_material.emission_energy_multiplier = 2.4
 		"alarm_raised":
 			smoke_target = 0.32

@@ -101,7 +101,7 @@
 fire-step/
 |-- assets/                 # модели, текстуры, UI и аудио
 |-- docs/                   # тест-план, ассеты, asset pipeline
-|-- scenes/                 # Briefing, Main, SecondaryGenerator, Evacuation, Debrief
+|-- scenes/                 # Briefing, ControlsLab, Main, SecondaryGenerator, Evacuation, Debrief
 |-- scripts/                # игровая логика сцен и сценарного состояния
 `-- ui/                     # HUD и runtime UI-логика
 ```
@@ -114,6 +114,11 @@ fire-step/
 |------|------------|
 | [`docs/ASSETS.md`](./docs/ASSETS.md) | Источники ассетов, лицензии и реальные пути использования |
 | [`docs/ASSET_PIPELINE.md`](./docs/ASSET_PIPELINE.md) | Пояснения по замене и обновлению визуальных ресурсов |
+| [`docs/TEST_PLAN.md`](./docs/TEST_PLAN.md) | Ручной сценарий проверки полного маршрута |
+| [`AGENTS.md`](./AGENTS.md) | Ограничения по стеку и правила работы в проекте |
+
+Проект остаётся маленьким demo-oriented MVP: без `C#`, `.NET`, плагинов, аддонов и внешних зависимостей вне локально подключённых ассетов.
+ению визуальных ресурсов |
 | [`docs/TEST_PLAN.md`](./docs/TEST_PLAN.md) | Ручной сценарий проверки полного маршрута |
 | [`AGENTS.md`](./AGENTS.md) | Ограничения по стеку и правила работы в проекте |
 

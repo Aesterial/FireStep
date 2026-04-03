@@ -18,11 +18,22 @@
    - `assets/models/detail-tank.glb`
    - `assets/models/chimney-small.glb`
    - `assets/models/chimney-medium.glb`
-   - `assets/textures/variation-a.png`
-   - `assets/textures/variation-b.png`
-   - `assets/textures/variation-c.png`
 
-2. `Kenney - UI Pack`
+2. `Kenney - Prototype Textures`
+   Источник: `https://kenney.nl/assets/prototype-textures`
+   Лицензия: `CC0`
+   Использование в проекте:
+   - `assets/textures/prototype/dark_02.png`
+   - `assets/textures/prototype/dark_04.png`
+   - `assets/textures/prototype/light_04.png`
+
+3. `Kenney - Input Prompts`
+   Источник: `https://kenney.nl/assets/input-prompts`
+   Лицензия: `CC0`
+   Использование в проекте:
+   - Иконки клавиш клавиатуры, мыши и кнопок геймпада Xbox в `assets/ui/prompts/`
+
+4. `Kenney - UI Pack`
    Источник: `https://kenney.nl/assets/ui-pack`
    Лицензия: `CC0`
    Использование в проекте:
@@ -36,7 +47,7 @@
    - `assets/ui/textures/divider.png`
    - `assets/ui/sounds/click-a.ogg`
 
-3. `Kenney - Impact Sounds`
+5. `Kenney - Impact Sounds`
    Источник: `https://kenney.nl/assets/impact-sounds`
    Лицензия: `CC0`
    Использование в проекте:

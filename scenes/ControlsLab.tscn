@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3 uid="uid://controlslabuid0"]
+
+[ext_resource type="Script" path="res://scripts/controls_lab_scene.gd" id="1_ctl"]
+[ext_resource type="Script" path="res://scripts/player_controller.gd" id="2_player"]
+[ext_resource type="PackedScene" path="res://ui/HUD.tscn" id="3_hud"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.35
+height = 1.2
+
+[node name="ControlsLab" type="Node3D"]
+script = ExtResource("1_ctl")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.81915206, 0.46984634, -0.32898995, 0, 0.57357645, 0.81915206, 0.57357645, -0.6710101, 0.46984634, 0, 0, 0)
+light_energy = 1.6
+shadow_enabled = true
+
+[node name="Player" type="CharacterBody3D" parent="."]
+script = ExtResource("2_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.95, 0)
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="Head" type="Node3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.55, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Player/Head"]
+current = true
+
+[node name="RayCast3D" type="RayCast3D" parent="Player/Head/Camera3D"]
+target_position = Vector3(0, 0, -4)
+collide_with_areas = true
+collide_with_bodies = false
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]

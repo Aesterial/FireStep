@@ -1,8 +1,8 @@
 extends Node3D
 
 const Interactable = preload("res://scripts/interactable.gd")
-const FLOOR_TEXTURE: Texture2D = preload("res://assets/textures/variation-c.png")
-const WALL_TEXTURE: Texture2D = preload("res://assets/textures/variation-a.png")
+const FLOOR_TEXTURE: Texture2D = preload("res://assets/textures/prototype/dark_04.png")
+const WALL_TEXTURE: Texture2D = preload("res://assets/textures/prototype/light_04.png")
 const DETAIL_TANK_SCENE: PackedScene = preload("res://assets/models/detail-tank.glb")
 const CHIMNEY_SMALL_SCENE: PackedScene = preload("res://assets/models/chimney-small.glb")
 
@@ -20,8 +20,8 @@ func _ready() -> void:
 
 
 func _configure_player_spawn() -> void:
-	player.global_position = Vector3(5.6, 0.0, 4.2)
-	player.rotation_degrees = Vector3(0.0, -140.0, 0.0)
+	player.global_position = Vector3(3.75, 0.0, -4.0)
+	player.rotation_degrees = Vector3(0.0, 180.0, 0.0)
 
 
 func _configure_environment() -> void:
@@ -45,36 +45,31 @@ func _build_world() -> void:
 	var dark_metal := _make_metal_material(Color(0.17, 0.19, 0.24), 0.62, 0.18)
 	var fence_material := _make_metal_material(Color(0.24, 0.27, 0.31), 0.48, 0.12)
 
-	root.add_child(_make_box_body(Vector3(16.0, 0.2, 14.0), Vector3(0.0, -0.1, 0.0), asphalt))
-	root.add_child(_make_box_body(Vector3(0.3, 2.4, 14.0), Vector3(-7.85, 1.2, 0.0), wall_material))
-	root.add_child(_make_box_body(Vector3(0.3, 2.4, 14.0), Vector3(7.85, 1.2, 0.0), wall_material))
-	root.add_child(_make_box_body(Vector3(16.0, 2.4, 0.3), Vector3(0.0, 1.2, 6.85), wall_material))
-	root.add_child(_make_box_body(Vector3(9.2, 2.4, 0.3), Vector3(3.4, 1.2, -6.85), wall_material))
-	root.add_child(_make_box_body(Vector3(2.2, 2.4, 0.3), Vector3(-6.7, 1.2, -6.85), wall_material))
+	root.add_child(_make_box_body(Vector3(20.0, 0.2, 18.0), Vector3(0.0, -0.1, 0.0), asphalt))
+	
+	root.add_child(_make_box_body(Vector3(0.3, 3.2, 18.0), Vector3(-9.85, 1.6, 0.0), wall_material))
+	root.add_child(_make_box_body(Vector3(0.3, 3.2, 18.0), Vector3(9.85, 1.6, 0.0), wall_material))
+	root.add_child(_make_box_body(Vector3(20.0, 3.2, 0.3), Vector3(0.0, 1.6, 8.85), wall_material))
+	root.add_child(_make_box_body(Vector3(12.0, 3.2, 0.3), Vector3(4.0, 1.6, -8.85), wall_material))
+	root.add_child(_make_box_body(Vector3(4.0, 3.2, 0.3), Vector3(-8.0, 1.6, -8.85), wall_material))
 
-	root.add_child(_make_box_body(Vector3(0.18, 2.6, 2.8), Vector3(-5.45, 1.3, -5.45), dark_metal))
-	root.add_child(_make_box_body(Vector3(5.0, 0.18, 2.8), Vector3(-2.95, 2.6, -5.45), dark_metal))
-	root.add_child(_make_box_body(Vector3(0.18, 2.6, 2.8), Vector3(-0.45, 1.3, -5.45), dark_metal))
+	# Corridor structures (moved away from center to provide wide path)
+	root.add_child(_make_box_body(Vector3(4.0, 3.0, 4.0), Vector3(-7.0, 1.5, 4.0), dark_metal))
+	root.add_child(_make_box_body(Vector3(4.0, 3.0, 4.0), Vector3(7.0, 1.5, -4.0), dark_metal))
+	
+	root.add_child(_make_scene_prop(DETAIL_TANK_SCENE, Vector3(7.5, 0.0, 6.0), Vector3(3.0, 3.0, 3.0), Vector3.ZERO))
+	root.add_child(_make_scene_prop(DETAIL_TANK_SCENE, Vector3(-7.5, 0.0, -6.0), Vector3(2.5, 2.5, 2.5), Vector3(0.0, 90.0, 0.0)))
+	
+	root.add_child(_make_scene_prop(CHIMNEY_SMALL_SCENE, Vector3(8.0, 0.0, 0.0), Vector3(2.0, 2.0, 2.0), Vector3.ZERO))
+	root.add_child(_make_scene_prop(CHIMNEY_SMALL_SCENE, Vector3(-8.0, 0.0, 2.0), Vector3(1.8, 1.8, 1.8), Vector3.ZERO))
 
-	for fence_z in [-4.0, -2.0, 0.0, 2.0, 4.0]:
-		root.add_child(_make_box_body(Vector3(0.12, 1.9, 0.12), Vector3(5.9, 0.95, fence_z), fence_material))
-		root.add_child(_make_box_body(Vector3(0.12, 1.9, 0.12), Vector3(3.7, 0.95, fence_z), fence_material))
-	for rail_z in [-3.0, 1.0]:
-		root.add_child(_make_visual_box(Vector3(2.25, 0.08, 0.08), Vector3(4.8, 0.7 + rail_z / 10.0, rail_z), Color(0.24, 0.27, 0.31), false, fence_material))
-		root.add_child(_make_visual_box(Vector3(2.25, 0.08, 0.08), Vector3(4.8, 1.35 + rail_z / 10.0, rail_z), Color(0.24, 0.27, 0.31), false, fence_material))
+	# Safe Route markings
+	root.add_child(_make_visual_box(Vector3(2.0, 0.04, 12.0), Vector3(3.75, 0.02, 2.0), Color(0.16, 0.68, 0.28), true))
+	root.add_child(_make_visual_box(Vector3(11.0, 0.04, 2.0), Vector3(-0.75, 0.02, -5.0), Color(0.16, 0.68, 0.28), true))
 
-	root.add_child(_make_visual_box(Vector3(1.6, 0.04, 7.6), Vector3(0.0, 0.02, 1.2), Color(0.16, 0.68, 0.28), true))
-	root.add_child(_make_visual_box(Vector3(5.4, 0.04, 0.34), Vector3(-2.7, 0.02, -4.2), Color(0.16, 0.68, 0.28), true))
-	root.add_child(_make_visual_box(Vector3(2.5, 0.04, 2.5), Vector3(-5.5, 0.02, -5.45), Color(0.16, 0.68, 0.28), true))
-
-	root.add_child(_make_visual_box(Vector3(3.0, 0.16, 1.5), Vector3(5.1, 0.08, 4.5), Color(0.18, 0.2, 0.24), false, dark_metal))
-	root.add_child(_make_visual_box(Vector3(2.2, 0.98, 1.3), Vector3(5.1, 0.57, 4.5), Color(0.22, 0.25, 0.3), false, fence_material))
-	root.add_child(_make_scene_prop(DETAIL_TANK_SCENE, Vector3(6.15, 0.0, -4.85), Vector3(1.8, 1.8, 1.8), Vector3(0.0, 90.0, 0.0)))
-	root.add_child(_make_scene_prop(CHIMNEY_SMALL_SCENE, Vector3(6.2, 0.0, 5.4), Vector3(1.4, 1.4, 1.4), Vector3.ZERO))
-
-	root.add_child(_make_label("Маршрут эвакуации", Vector3(0.0, 2.8, 3.0), Color(0.96, 0.95, 0.86), 34))
+	root.add_child(_make_label("Маршрут эвакуации", Vector3(3.75, 3.0, 0.0), Color(0.96, 0.95, 0.86), 34))
 	root.add_child(_make_label("Пункт сбора", Vector3(-5.5, 1.1, -5.45), Color(0.78, 1.0, 0.82), 34))
-	root.add_child(_make_label("Назад в опасную зону", Vector3(4.8, 2.1, -5.85), Color(1.0, 0.82, 0.82), 28))
+	root.add_child(_make_label("Назад в опасную зону", Vector3(3.75, 2.5, -8.7), Color(1.0, 0.82, 0.82), 28))
 
 	_build_interactions(root)
 	_build_lights(root)
@@ -85,34 +80,35 @@ func _build_interactions(parent: Node3D) -> void:
 	parent.add_child(_make_interactable_panel(
 		"AssemblyTerminal",
 		"assembly",
-		"[E] Подтвердить эвакуацию",
+		"Подтвердить эвакуацию",
 		Vector3(-5.5, 1.05, -5.45),
 		Vector3(0.56, 0.76, 0.32),
 		assembly_material,
 		"СБОР"
 	))
 
+	# Door frame for the Danger exit to make it look depthy and not clipped
+	parent.add_child(_make_visual_box(Vector3(1.6, 2.8, 0.1), Vector3(3.75, 1.25, -8.8), Color(0.1, 0.1, 0.12), false, _make_metal_material(Color(0.1, 0.12, 0.15), 0.6, 0.1)))
+
 	var danger_material := _make_panel_material(Color(0.82, 0.18, 0.12))
 	parent.add_child(_make_interactable_panel(
 		"DangerDoor",
 		"danger",
-		"[E] Вернуться к оборудованию",
-		Vector3(3.75, 1.2, -5.45),
-		Vector3(0.3, 0.86, 1.1),
+		"Вернуться к оборудованию",
+		Vector3(3.75, 1.2, -8.6),
+		Vector3(1.2, 2.4, 0.2),
 		danger_material,
 		"ОПАСНО"
 	))
-	parent.add_child(_make_box_body(Vector3(0.16, 2.5, 1.9), Vector3(4.08, 1.25, -5.45), _make_metal_material(Color(0.18, 0.19, 0.22), 0.62, 0.08)))
 
 
 func _build_lights(parent: Node3D) -> void:
-	for light_pos in [Vector3(-4.2, 3.0, 2.8), Vector3(0.0, 3.0, 0.0), Vector3(-5.5, 2.6, -5.45)]:
-		parent.add_child(_make_visual_box(Vector3(1.8, 0.08, 0.38), light_pos, Color(0.88, 0.92, 0.96), true))
+	for light_pos in [Vector3(3.75, 4.0, 0.0), Vector3(-2.0, 4.0, -5.0), Vector3(-5.5, 2.6, -5.45)]:
 		var lamp := OmniLight3D.new()
-		lamp.position = light_pos + Vector3(0.0, -0.2, 0.0)
+		lamp.position = light_pos
 		lamp.light_color = Color(0.9, 0.95, 1.0)
-		lamp.light_energy = 1.5
-		lamp.omni_range = 5.6
+		lamp.light_energy = 2.0
+		lamp.omni_range = 10.0
 		parent.add_child(lamp)
 
 
@@ -156,6 +152,7 @@ func _complete_success() -> void:
 
 
 func _complete_failure(title: String, body: String) -> void:
+	GameSession.add_error()
 	GameSession.set_final_result(
 		false,
 		title,
@@ -240,7 +237,7 @@ func _make_interactable_panel(
 	mesh_instance.material_override = material
 	area.add_child(mesh_instance)
 
-	area.add_child(_make_label(label_text, Vector3(0.0, 0.74, 0.0), Color(1.0, 1.0, 1.0), 30))
+	area.add_child(_make_label(label_text, Vector3(0.0, size.y/2 + 0.16, 0.0), Color(1.0, 1.0, 1.0), 30))
 	return area
 
 

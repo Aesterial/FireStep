@@ -248,9 +248,14 @@ func _build_ui() -> void:
 	decision_box.add_child(decision_body_label)
 	decision_box.add_child(UISkin.make_divider())
 
-	decision_box.add_child(_make_action_button("Подать сигнал / вызвать помощь", "alarm", "green"))
-	decision_box.add_child(_make_action_button("Сразу эвакуироваться", "evacuate", "blue"))
-	decision_box.add_child(_make_action_button("Пытаться спасать оборудование", "save", "red"))
+	var buttons = [
+		_make_action_button("Подать сигнал / вызвать помощь", "alarm", "green"),
+		_make_action_button("Сразу эвакуироваться", "evacuate", "blue"),
+		_make_action_button("Пытаться спасать оборудование", "save", "red")
+	]
+	buttons.shuffle()
+	for btn in buttons:
+		decision_box.add_child(btn)
 
 	result_overlay = ColorRect.new()
 	result_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)

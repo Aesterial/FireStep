@@ -68,6 +68,12 @@ func _build_ui() -> void:
 
 	box.add_child(UISkin.make_divider())
 
+	var stats_title := Label.new()
+	stats_title.text = "Статистика сессии: Время - %s | Ошибок - %d" % [GameSession.get_elapsed_time_string(), GameSession.total_errors]
+	stats_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	UISkin.apply_title(stats_title, 18, Color(0.9, 0.95, 1.0))
+	box.add_child(stats_title)
+
 	var highlights_title := Label.new()
 	highlights_title.text = "Ключевые выводы"
 	UISkin.apply_title(highlights_title, 22, Color(1.0, 0.98, 0.92))
@@ -101,13 +107,16 @@ func _build_ui() -> void:
 	var r_key := InputEventKey.new()
 	r_key.keycode = KEY_R
 	restart_shortcut.events.append(r_key)
+	var restart_joy := InputEventJoypadButton.new()
+	restart_joy.button_index = JOY_BUTTON_Y
+	restart_shortcut.events.append(restart_joy)
 	restart.shortcut = restart_shortcut
 
 	restart.pressed.connect(_on_restart_pressed)
 	buttons.add_child(restart)
 
 	var briefing := Button.new()
-	briefing.text = "Вернуться к брифингу [Enter / Space]"
+	briefing.text = "Вернуться на титульный [Enter / Accept]"
 	briefing.custom_minimum_size = Vector2(320, 50)
 	UISkin.apply_button(briefing, "blue")
 	_wire_click(briefing)
@@ -119,6 +128,9 @@ func _build_ui() -> void:
 	var space_key := InputEventKey.new()
 	space_key.keycode = KEY_SPACE
 	briefing_shortcut.events.append(space_key)
+	var accept_joy := InputEventJoypadButton.new()
+	accept_joy.button_index = JOY_BUTTON_A
+	briefing_shortcut.events.append(accept_joy)
 	briefing.shortcut = briefing_shortcut
 
 	briefing.pressed.connect(_on_back_pressed)
@@ -131,7 +143,7 @@ func _on_restart_pressed() -> void:
 
 
 func _on_back_pressed() -> void:
-	GameSession.reset_session()
+	GameSession.reset_session(true)
 	get_tree().change_scene_to_file("res://scenes/Briefing.tscn")
 
 

@@ -1,8 +1,9 @@
 extends Node3D
 
 const Interactable = preload("res://scripts/interactable.gd")
-const FLOOR_TEXTURE: Texture2D = preload("res://assets/textures/variation-c.png")
-const WALL_TEXTURE: Texture2D = preload("res://assets/textures/variation-b.png")
+const FLOOR_TEXTURE: Texture2D = preload("res://assets/textures/prototype/dark_04.png")
+const WALL_TEXTURE: Texture2D = preload("res://assets/textures/prototype/light_04.png")
+const CEILING_TEXTURE: Texture2D = preload("res://assets/textures/prototype/dark_02.png")
 const DETAIL_TANK_SCENE: PackedScene = preload("res://assets/models/detail-tank.glb")
 const CHIMNEY_SMALL_SCENE: PackedScene = preload("res://assets/models/chimney-small.glb")
 
@@ -63,107 +64,68 @@ func _build_world() -> void:
 
 	var floor_material := _make_textured_material(FLOOR_TEXTURE, Vector3(3.3, 3.3, 1.0), 0.95, Color(0.88, 0.9, 0.92))
 	var wall_material := _make_textured_material(WALL_TEXTURE, Vector3(1.9, 1.2, 1.0), 0.9, Color(0.94, 0.95, 0.98))
+	var ceiling_material := _make_textured_material(CEILING_TEXTURE, Vector3(3.3, 3.3, 1.0), 0.9, Color(0.88, 0.9, 0.92))
 	var dark_metal := _make_metal_material(Color(0.17, 0.19, 0.23), 0.62, 0.18)
 
 	root.add_child(_make_box_body(Vector3(11.0, 0.2, 9.0), Vector3(0.0, -0.1, 0.0), floor_material))
-	root.add_child(_make_box_body(Vector3(11.0, 0.2, 9.0), Vector3(0.0, 3.8, 0.0), wall_material))
+	root.add_child(_make_box_body(Vector3(11.0, 0.2, 9.0), Vector3(0.0, 3.8, 0.0), ceiling_material))
 	root.add_child(_make_box_body(Vector3(11.0, 4.0, 0.3), Vector3(0.0, 1.9, -4.35), wall_material))
 	root.add_child(_make_box_body(Vector3(11.0, 4.0, 0.3), Vector3(0.0, 1.9, 4.35), wall_material))
 	root.add_child(_make_box_body(Vector3(0.3, 4.0, 9.0), Vector3(5.35, 1.9, 0.0), wall_material))
 	root.add_child(_make_box_body(Vector3(0.3, 4.0, 3.4), Vector3(-5.35, 1.9, 2.65), wall_material))
 	root.add_child(_make_box_body(Vector3(0.3, 1.2, 1.9), Vector3(-5.35, 3.4, -1.95), dark_metal))
-	root.add_child(_make_box_body(Vector3(0.3, 1.4, 3.7), Vector3(-5.35, 0.7, -2.85), dark_metal))
-
-	for beam_z in [-2.9, 0.0, 2.9]:
-		root.add_child(_make_box_body(Vector3(10.6, 0.18, 0.35), Vector3(0.0, 3.4, beam_z), dark_metal))
-
-	root.add_child(_make_visual_box(Vector3(0.26, 0.26, 6.4), Vector3(4.4, 3.55, 0.0), Color(0.26, 0.29, 0.34), false, dark_metal))
-	root.add_child(_make_visual_box(Vector3(0.26, 0.26, 6.4), Vector3(3.8, 3.55, 0.0), Color(0.26, 0.29, 0.34), false, dark_metal))
-	root.add_child(_make_visual_box(Vector3(2.4, 0.04, 0.34), Vector3(1.2, 0.02, 1.0), Color(0.95, 0.74, 0.14), true))
-	root.add_child(_make_visual_box(Vector3(0.34, 0.04, 2.8), Vector3(-0.95, 0.02, -0.4), Color(0.95, 0.74, 0.14), true))
-	root.add_child(_make_visual_box(Vector3(2.8, 0.04, 0.34), Vector3(-3.1, 0.02, -2.4), Color(0.18, 0.72, 0.3), true))
-
-	root.add_child(_make_scene_prop(DETAIL_TANK_SCENE, Vector3(4.15, 0.0, -3.1), Vector3(1.9, 1.9, 1.9), Vector3(0.0, 90.0, 0.0)))
-	root.add_child(_make_scene_prop(CHIMNEY_SMALL_SCENE, Vector3(3.2, 0.0, 3.25), Vector3(1.4, 1.4, 1.4), Vector3.ZERO))
+	root.add_child(_make_box_body(Vector3(0.3, 1.1, 1.9), Vector3(-5.35, 0.45, -1.95), dark_metal))
 
 	_build_generator(root)
 	_build_exit(root)
 	_build_lights(root)
+	
+	root.add_child(_make_scene_prop(DETAIL_TANK_SCENE, Vector3(-4.2, 0.0, 3.4), Vector3(1.6, 1.6, 1.6), Vector3(0.0, 45.0, 0.0)))
+	root.add_child(_make_scene_prop(CHIMNEY_SMALL_SCENE, Vector3(4.2, 0.0, -3.2), Vector3(1.4, 1.4, 1.4), Vector3.ZERO))
 
 
 func _build_generator(parent: Node3D) -> void:
-	var rig := Node3D.new()
-	rig.position = Vector3(-1.25, 0.0, -0.8)
-	parent.add_child(rig)
+	generator_body_material = _make_metal_material(Color(0.28, 0.32, 0.38), 0.55, 0.2)
+	var gen_root := Node3D.new()
+	gen_root.position = Vector3(0.5, 0.0, -0.5)
+	parent.add_child(gen_root)
 
-	generator_body_material = _make_metal_material(Color(0.36, 0.4, 0.46), 0.46, 0.16)
-	rig.add_child(_make_visual_box(Vector3(3.1, 0.2, 2.1), Vector3(0.0, 0.1, 0.0), Color(0.14, 0.16, 0.2), false, _make_metal_material(Color(0.14, 0.16, 0.2), 0.72, 0.06)))
-	rig.add_child(_make_visual_box(Vector3(2.6, 1.0, 1.8), Vector3(0.0, 0.62, 0.0), Color(0.36, 0.4, 0.46), false, generator_body_material))
-	rig.add_child(_make_visual_box(Vector3(0.94, 1.28, 0.8), Vector3(0.92, 0.86, 0.44), Color(0.21, 0.24, 0.29), false, _make_metal_material(Color(0.21, 0.24, 0.29), 0.4, 0.1)))
+	var main_body := _make_box_body(Vector3(2.4, 1.8, 1.6), Vector3(0.0, 0.9, 0.0), generator_body_material)
+	gen_root.add_child(main_body)
 
-	for tank_pos in [Vector3(-0.72, 1.24, -0.44), Vector3(-0.72, 1.24, 0.44)]:
-		var tank_mesh := MeshInstance3D.new()
-		var tank := CylinderMesh.new()
-		tank.top_radius = 0.28
-		tank.bottom_radius = 0.28
-		tank.height = 1.6
-		tank_mesh.mesh = tank
-		tank_mesh.rotation_degrees = Vector3(0.0, 0.0, 90.0)
-		tank_mesh.position = tank_pos
-		tank_mesh.material_override = generator_body_material
-		rig.add_child(tank_mesh)
-
-	status_lamp_material = _make_metal_material(Color(1.0, 0.22, 0.12), 0.22, 0.0)
-	status_lamp_material.emission_enabled = true
-	status_lamp_material.emission = Color(1.0, 0.22, 0.12)
-	status_lamp_material.emission_energy_multiplier = 2.2
-	var lamp := MeshInstance3D.new()
-	var lamp_mesh := SphereMesh.new()
-	lamp_mesh.radius = 0.15
-	lamp_mesh.height = 0.3
-	lamp.mesh = lamp_mesh
-	lamp.material_override = status_lamp_material
-	lamp.position = Vector3(0.94, 1.98, 0.44)
-	rig.add_child(lamp)
-
-	warning_light = OmniLight3D.new()
-	warning_light.position = Vector3(0.94, 2.0, 0.44)
-	warning_light.light_color = Color(1.0, 0.24, 0.14)
-	warning_light.light_energy = 4.6
-	warning_light.omni_range = 5.2
-	rig.add_child(warning_light)
+	status_lamp_material = _make_panel_material(Color(0.95, 0.15, 0.12))
+	var lamp_mesh := _make_visual_box(Vector3(0.18, 0.18, 0.18), Vector3(0.0, 1.9, 0.0), Color(0.95, 0.15, 0.12), true, status_lamp_material)
+	gen_root.add_child(lamp_mesh)
 
 	smoke_root = Node3D.new()
-	smoke_root.position = Vector3(-1.72, 1.72, 0.0)
-	rig.add_child(smoke_root)
-	for index in range(4):
+	smoke_root.position = Vector3(0.0, 1.8, 0.0)
+	gen_root.add_child(smoke_root)
+	for i in range(5):
 		var puff := MeshInstance3D.new()
-		var puff_mesh := SphereMesh.new()
-		puff_mesh.radius = 0.16 + index * 0.03
-		puff_mesh.height = 0.32 + index * 0.05
-		puff.mesh = puff_mesh
-		var smoke_material := StandardMaterial3D.new()
-		smoke_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		smoke_material.albedo_color = Color(0.18, 0.18, 0.18, 0.22)
-		smoke_material.roughness = 1.0
-		smoke_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		puff.material_override = smoke_material
+		var mesh := SphereMesh.new()
+		mesh.radius = 0.28 + i * 0.06
+		mesh.height = mesh.radius * 2.0
+		puff.mesh = mesh
+		puff.position = Vector3(randf_range(-0.4, 0.4), i * 0.35, randf_range(-0.4, 0.4))
+		var puff_material := StandardMaterial3D.new()
+		puff_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		puff_material.albedo_color = Color(0.22, 0.22, 0.22, 0.3)
+		puff_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		puff.material_override = puff_material
 		smoke_root.add_child(puff)
 		smoke_puffs.append(puff)
-		smoke_materials.append(smoke_material)
+		smoke_materials.append(puff_material)
 
 	switch_material = _make_panel_material(Color(0.95, 0.68, 0.08))
 	parent.add_child(_make_interactable_panel(
 		"GeneratorSwitch",
 		"generator_switch",
-		"[E] Отключить резервный генератор",
+		"Отключить резервный генератор",
 		Vector3(1.0, 1.1, -1.2),
 		Vector3(0.58, 0.62, 0.26),
 		switch_material,
 		"GEN-02"
 	))
-
-	parent.add_child(_make_label("Резервный генератор", Vector3(-1.1, 2.6, -0.8), Color(1.0, 0.96, 0.84), 34))
 
 
 func _build_exit(parent: Node3D) -> void:
@@ -171,7 +133,7 @@ func _build_exit(parent: Node3D) -> void:
 	parent.add_child(_make_interactable_panel(
 		"ExitDoor",
 		"exit_annex",
-		"[E] Перейти к эвакуации",
+		"Перейти к эвакуации",
 		Vector3(-4.75, 1.18, -2.0),
 		Vector3(0.24, 0.56, 0.9),
 		exit_panel_material,
@@ -253,32 +215,26 @@ func _try_exit() -> void:
 	else:
 		GameSession.set_workshop_summary("%s После выхода из цеха резервный генератор был обесточен в соседнем модуле." % GameSession.workshop_summary)
 
-	get_tree().change_scene_to_file("res://scenes/Evacuation.tscn")
+	get_tree().change_scene_to_file("res://scenes/PowerShutdown.tscn")
 
 
 func _update_warning_light() -> void:
-	var pulse := 0.58 + 0.42 * sin(Time.get_ticks_msec() * 0.008)
-	if generator_disabled:
-		warning_light.visible = false
-		status_lamp_material.emission_energy_multiplier = 1.2
-		return
-
-	warning_light.visible = true
-	warning_light.light_energy = 3.0 + pulse * 2.0
-	status_lamp_material.emission_energy_multiplier = 1.8 + pulse * 1.6
+	pass
 
 
 func _update_smoke(delta: float) -> void:
-	var target := 0.08 if generator_disabled else 0.42
-	var time := Time.get_ticks_msec() * 0.001
-	for index in smoke_puffs.size():
-		var puff := smoke_puffs[index]
-		var material := smoke_materials[index]
-		var rise := fmod(time * (0.3 + index * 0.05) + index * 0.18, 1.3)
-		puff.position = Vector3(sin(time + index) * 0.12, rise * target * 2.0, cos(time * 1.2 + index) * 0.09)
-		puff.scale = Vector3.ONE * (0.7 + rise * 0.22 + target)
-		var alpha := clampf(0.04 + target * 0.4 - rise * 0.04, 0.02, 0.22)
-		material.albedo_color = material.albedo_color.lerp(Color(0.18, 0.18, 0.18, alpha), delta * 3.0)
+	if generator_disabled:
+		for mat in smoke_materials:
+			mat.albedo_color.a = lerp(mat.albedo_color.a, 0.0, delta * 1.5)
+		return
+
+	for i in range(smoke_puffs.size()):
+		var puff = smoke_puffs[i]
+		puff.position.y += delta * 0.4
+		if puff.position.y > 1.8:
+			puff.position.y = 0.0
+			puff.position.x = randf_range(-0.4, 0.4)
+			puff.position.z = randf_range(-0.4, 0.4)
 
 
 func _make_box_body(size: Vector3, position: Vector3, material: Material) -> StaticBody3D:
@@ -353,7 +309,7 @@ func _make_interactable_panel(
 	mesh_instance.material_override = material
 	area.add_child(mesh_instance)
 
-	area.add_child(_make_label(label_text, Vector3(0.0, 0.56, 0.0), Color(1.0, 1.0, 1.0), 30))
+	area.add_child(_make_label(label_text, Vector3(0.0, size.y/2 + 0.16, 0.0), Color(1.0, 1.0, 1.0), 30))
 	return area
 
 
@@ -366,7 +322,7 @@ func _make_label(text: String, position: Vector3, color: Color, font_size: int) 
 	label.pixel_size = 0.01
 	label.font_size = font_size
 	label.outline_size = 8
-	label.outline_modulate = Color(0.0, 0.0, 0.0, 0.85)
+	label.outline_modulate = Color(0.0, 0.0, 0.0, 0.8)
 	return label
 
 
