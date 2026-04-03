@@ -3,8 +3,6 @@
 [ext_resource type="Script" uid="uid://c185xnpnl8wdu" path="res://scripts/evacuation_scene.gd" id="1_evac"]
 [ext_resource type="Script" uid="uid://cj84ls22wl83i" path="res://scripts/player_controller.gd" id="2_player"]
 [ext_resource type="PackedScene" path="res://ui/HUD.tscn" id="3_hud"]
-[ext_resource type="PackedScene" uid="uid://6y5al5xukgwx" path="res://assets/models/building-b.glb" id="4_corridor"]
-[ext_resource type="PackedScene" uid="uid://cqquorbfb7bi1" path="res://assets/models/chimney-small.glb" id="5_assembly"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
 radius = 0.35
@@ -12,8 +10,6 @@ height = 1.2
 
 [node name="Evacuation" type="Node3D" unique_id=854712822]
 script = ExtResource("1_evac")
-corridor_visual_scene = ExtResource("4_corridor")
-assembly_visual_scene = ExtResource("5_assembly")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=259658065]
 

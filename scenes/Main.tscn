@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://cl6pq761ti8qd" path="res://scripts/main.gd" id="1_main"]
 [ext_resource type="Script" uid="uid://cj84ls22wl83i" path="res://scripts/player_controller.gd" id="2_player"]
-[ext_resource type="PackedScene" uid="uid://6y5al5xukgwx" path="res://assets/models/building-b.glb" id="2_vcsgt"]
 [ext_resource type="Script" uid="uid://68vl6gi0gfdg" path="res://scripts/scenario_state.gd" id="3_scenario"]
 [ext_resource type="PackedScene" path="res://ui/HUD.tscn" id="4_hud"]
 
@@ -12,8 +11,6 @@ height = 1.2
 
 [node name="Main" type="Node3D" unique_id=372551667]
 script = ExtResource("1_main")
-workshop_props_scene = ExtResource("2_vcsgt")
-machine_visual_scene = ExtResource("2_vcsgt")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1752631577]
 

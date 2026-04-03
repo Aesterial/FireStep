@@ -1,7 +1,12 @@
 extends Control
 
+const UISkin = preload("res://scripts/ui_skin.gd")
+
+var click_player: AudioStreamPlayer
+
 
 func _ready() -> void:
+	click_player = UISkin.make_click_player(self)
 	_build_ui()
 
 
@@ -13,28 +18,47 @@ func _build_ui() -> void:
 
 	var shell := MarginContainer.new()
 	shell.set_anchors_preset(Control.PRESET_FULL_RECT)
-	shell.add_theme_constant_override("margin_left", 56)
-	shell.add_theme_constant_override("margin_top", 42)
-	shell.add_theme_constant_override("margin_right", 56)
-	shell.add_theme_constant_override("margin_bottom", 42)
+	shell.add_theme_constant_override("margin_left", 40)
+	shell.add_theme_constant_override("margin_top", 32)
+	shell.add_theme_constant_override("margin_right", 40)
+	shell.add_theme_constant_override("margin_bottom", 32)
 	add_child(shell)
 
 	var outer_vbox := VBoxContainer.new()
-	outer_vbox.add_theme_constant_override("separation", 24)
+	outer_vbox.add_theme_constant_override("separation", 22)
 	shell.add_child(outer_vbox)
 
-	var scroll := ScrollContainer.new()
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	outer_vbox.add_child(scroll)
+	var hero := _make_card(Color(0.34, 0.74, 1.0, 0.88), Vector4(22.0, 20.0, 22.0, 18.0))
+	outer_vbox.add_child(hero)
+
+	var hero_box := VBoxContainer.new()
+	hero_box.add_theme_constant_override("separation", 10)
+	hero.add_child(hero_box)
+
+	var eyebrow := Label.new()
+	eyebrow.text = "VR in Production / FireStep"
+	UISkin.apply_title(eyebrow, 16, Color(1.0, 0.98, 0.9))
+	hero_box.add_child(eyebrow)
+
+	var title := Label.new()
+	title.text = "Учебный маршрут по пожару на промышленном объекте"
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	UISkin.apply_title(title, 28, Color(0.98, 0.99, 1.0))
+	hero_box.add_child(title)
+
+	var subtitle := Label.new()
+	subtitle.text = "Оператор должен остановить основной модуль, отойти на безопасную дистанцию, вызвать помощь, отключить резервный генератор и завершить эвакуацию на пункте сбора."
+	subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	UISkin.apply_body(subtitle, 18, Color(0.95, 0.98, 1.0))
+	hero_box.add_child(subtitle)
+	hero_box.add_child(UISkin.make_divider())
 
 	var columns := HBoxContainer.new()
-	columns.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	columns.add_theme_constant_override("separation", 24)
-	scroll.add_child(columns)
+	columns.add_theme_constant_override("separation", 20)
+	outer_vbox.add_child(columns)
 
-	var left := _make_card(Color(0.08, 0.1, 0.14, 0.94), Color(0.92, 0.3, 0.18))
+	var left := _make_card(Color(0.98, 0.64, 0.16, 0.88), Vector4(20.0, 18.0, 20.0, 18.0))
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	columns.add_child(left)
 
@@ -42,67 +66,55 @@ func _build_ui() -> void:
 	left_box.add_theme_constant_override("separation", 14)
 	left.add_child(left_box)
 
-	var title := Label.new()
-	title.text = "VR в производстве"
-	title.add_theme_font_size_override("font_size", 34)
-	title.add_theme_color_override("font_color", Color(1.0, 0.95, 0.9))
-	left_box.add_child(title)
-
-	var subtitle := Label.new()
-	subtitle.text = "Учебный 3D-тренажёр по действиям при признаках возгорания оборудования"
-	subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	subtitle.add_theme_font_size_override("font_size", 19)
-	subtitle.add_theme_color_override("font_color", Color(0.83, 0.89, 0.98))
-	left_box.add_child(subtitle)
-
 	left_box.add_child(_make_section(
 		"Задача",
 		[
-			"Вы оператор компрессора в производственном помещении.",
-			"Нужно показать правильную последовательность действий при дыме и тревожной индикации.",
-			"Приоритет: безопасность людей и эвакуация, а не спасение оборудования."
+			"Вы находитесь в производственном блоке компрессорной установки.",
+			"Приоритет сценария: защита людей и снижение риска, а не спасение оборудования любой ценой.",
+			"Ошибки на любом этапе переводят на итоговый разбор с фиксацией причины провала."
 		]
 	))
+
+	left_box.add_child(UISkin.make_divider())
 
 	left_box.add_child(_make_section(
 		"Маршрут тренировки",
 		[
-			"1. Остановить оборудование аварийной кнопкой.",
-			"2. Отойти на безопасную дистанцию.",
-			"3. Выбрать вызов помощи.",
-			"4. Эвакуироваться в коридор.",
-			"5. Дойти до пункта сбора и подтвердить эвакуацию."
+			"1. Остановить основной модуль аварийной кнопкой.",
+			"2. Отойти в безопасную зону.",
+			"3. Зафиксировать вызов помощи.",
+			"4. Выйти из цеха в соседний модуль.",
+			"5. Отключить резервный генератор GEN-02.",
+			"6. Дойти до пункта сбора и подтвердить эвакуацию."
 		]
 	))
 
-	var controls := _make_card(Color(0.1, 0.12, 0.16, 0.94), Color(0.18, 0.72, 0.34))
-	controls.custom_minimum_size = Vector2(360, 0)
-	controls.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	columns.add_child(controls)
+	var right := _make_card(Color(0.3, 0.86, 0.44, 0.88), Vector4(20.0, 18.0, 20.0, 18.0))
+	right.custom_minimum_size = Vector2(370, 0)
+	columns.add_child(right)
 
-	var controls_box := VBoxContainer.new()
-	controls_box.add_theme_constant_override("separation", 14)
-	controls.add_child(controls_box)
+	var right_box := VBoxContainer.new()
+	right_box.add_theme_constant_override("separation", 14)
+	right.add_child(right_box)
 
 	var controls_title := Label.new()
 	controls_title.text = "Управление"
-	controls_title.add_theme_font_size_override("font_size", 28)
-	controls_title.add_theme_color_override("font_color", Color(0.9, 1.0, 0.92))
-	controls_box.add_child(controls_title)
+	UISkin.apply_title(controls_title, 24, Color(0.98, 0.99, 1.0))
+	right_box.add_child(controls_title)
+	right_box.add_child(UISkin.make_divider())
 
-	controls_box.add_child(_make_key_row("WASD", "Движение"))
-	controls_box.add_child(_make_key_row("Мышь", "Осмотр"))
-	controls_box.add_child(_make_key_row("E", "Взаимодействие"))
-	controls_box.add_child(_make_key_row("Shift", "Быстрее идти"))
-	controls_box.add_child(_make_key_row("Esc", "Освободить / вернуть мышь"))
-	controls_box.add_child(_make_key_row("R", "Перезапуск после завершения"))
+	right_box.add_child(_make_key_row("WASD", "Движение"))
+	right_box.add_child(_make_key_row("Мышь", "Осмотр"))
+	right_box.add_child(_make_key_row("E", "Взаимодействие"))
+	right_box.add_child(_make_key_row("Shift", "Быстрый шаг"))
+	right_box.add_child(_make_key_row("Esc", "Освободить / вернуть мышь"))
+	right_box.add_child(_make_key_row("R", "Перезапуск активной сцены"))
 
 	var note := Label.new()
-	note.text = "Для замены примитивов на модели см. docs/ASSET_PIPELINE.md и export-поля сцен."
+	note.text = "Визуалы и звуки взяты из пакетов Kenney; детали по ассетам и проверке лежат в docs/ASSETS.md и docs/TEST_PLAN.md."
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	note.add_theme_font_size_override("font_size", 16)
-	note.add_theme_color_override("font_color", Color(0.79, 0.84, 0.91))
-	controls_box.add_child(note)
+	UISkin.apply_body(note, 15, Color(0.95, 0.98, 1.0))
+	right_box.add_child(note)
 
 	var button_row := HBoxContainer.new()
 	button_row.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -110,7 +122,9 @@ func _build_ui() -> void:
 
 	var start_button := Button.new()
 	start_button.text = "Начать тренировку [Enter / Space]"
-	start_button.custom_minimum_size = Vector2(250, 54)
+	start_button.custom_minimum_size = Vector2(320, 56)
+	UISkin.apply_button(start_button, "green")
+	_wire_click(start_button)
 
 	var start_shortcut := Shortcut.new()
 	var enter_key := InputEventKey.new()
@@ -130,18 +144,9 @@ func _on_start_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")
 
 
-func _make_card(background: Color, border: Color) -> PanelContainer:
+func _make_card(tint: Color, padding: Vector4) -> PanelContainer:
 	var card := PanelContainer.new()
-	var style := StyleBoxFlat.new()
-	style.bg_color = background
-	style.border_color = border
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(12)
-	style.content_margin_left = 18
-	style.content_margin_top = 18
-	style.content_margin_right = 18
-	style.content_margin_bottom = 18
-	card.add_theme_stylebox_override("panel", style)
+	UISkin.apply_panel(card, tint, padding)
 	return card
 
 
@@ -151,16 +156,14 @@ func _make_section(title_text: String, lines: Array[String]) -> VBoxContainer:
 
 	var title := Label.new()
 	title.text = title_text
-	title.add_theme_font_size_override("font_size", 24)
-	title.add_theme_color_override("font_color", Color(0.96, 0.82, 0.68))
+	UISkin.apply_title(title, 22, Color(1.0, 0.98, 0.92))
 	box.add_child(title)
 
 	for line in lines:
 		var bullet := Label.new()
 		bullet.text = "• %s" % line
 		bullet.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		bullet.add_theme_font_size_override("font_size", 18)
-		bullet.add_theme_color_override("font_color", Color(0.9, 0.95, 1.0))
+		UISkin.apply_body(bullet, 17, Color(0.95, 0.98, 1.0))
 		box.add_child(bullet)
 
 	return box
@@ -172,17 +175,22 @@ func _make_key_row(key_text: String, action_text: String) -> HBoxContainer:
 
 	var key := Label.new()
 	key.text = key_text
-	key.custom_minimum_size = Vector2(90, 0)
-	key.add_theme_font_size_override("font_size", 19)
-	key.add_theme_color_override("font_color", Color(1.0, 0.95, 0.82))
+	key.custom_minimum_size = Vector2(96, 0)
+	UISkin.apply_title(key, 18, Color(1.0, 0.98, 0.9))
 	row.add_child(key)
 
 	var action := Label.new()
 	action.text = action_text
 	action.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	action.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	action.add_theme_font_size_override("font_size", 18)
-	action.add_theme_color_override("font_color", Color(0.86, 0.92, 0.99))
+	UISkin.apply_body(action, 17, Color(0.95, 0.98, 1.0))
 	row.add_child(action)
 
 	return row
+
+
+func _wire_click(button: BaseButton) -> void:
+	button.pressed.connect(func() -> void:
+		if click_player != null:
+			click_player.play()
+	)

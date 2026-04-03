@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Godot Project
+    runs-on: ubuntu-latest
+
+    env:
+      GODOT_VERSION: 4.6.2
+      GODOT_STATUS: stable
+      GODOT_ARCHIVE: Godot_v4.6.2-stable_linux.x86_64.zip
+      GODOT_BINARY: Godot_v4.6.2-stable_linux.x86_64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download Godot
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -L --fail --retry 3 \
+            "https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}-${GODOT_STATUS}/${GODOT_ARCHIVE}" \
+            -o "$RUNNER_TEMP/godot.zip"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/${GODOT_BINARY}"
+          echo "$RUNNER_TEMP/godot" >> "$GITHUB_PATH"
+
+      - name: Import assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${GODOT_BINARY}" --headless --path . --import
+
+      - name: Run headless smoke check
+        shell: bash
+        run: |
+          set -euo pipefail
+          "${GODOT_BINARY}" --headless --path . --quit-after 1
+
+      - name: Verify repository docs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f README.md
+          test -f docs/TEST_PLAN.md
+          test -f docs/ASSETS.md

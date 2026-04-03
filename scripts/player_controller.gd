@@ -7,6 +7,15 @@ const WALK_SPEED: float = 4.6
 const SPRINT_SPEED: float = 6.2
 const MOUSE_SENSITIVITY: float = 0.0026
 const LOOK_LIMIT: float = deg_to_rad(80.0)
+const FOOTSTEP_INTERVAL_WALK: float = 0.48
+const FOOTSTEP_INTERVAL_SPRINT: float = 0.31
+const FOOTSTEP_STREAMS: Array[AudioStream] = [
+	preload("res://assets/audio/footsteps/footstep_concrete_000.ogg"),
+	preload("res://assets/audio/footsteps/footstep_concrete_001.ogg"),
+	preload("res://assets/audio/footsteps/footstep_concrete_002.ogg"),
+	preload("res://assets/audio/footsteps/footstep_concrete_003.ogg"),
+	preload("res://assets/audio/footsteps/footstep_concrete_004.ogg"),
+]
 
 @onready var head: Node3D = $Head
 @onready var ray_cast: RayCast3D = $Head/Camera3D/RayCast3D
@@ -14,10 +23,16 @@ const LOOK_LIMIT: float = deg_to_rad(80.0)
 var gravity: float = float(ProjectSettings.get_setting("physics/3d/default_gravity"))
 var gameplay_enabled: bool = true
 var current_interactable: Interactable
+var footstep_player: AudioStreamPlayer
+var footstep_time_left: float = 0.0
 
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	footstep_player = AudioStreamPlayer.new()
+	footstep_player.bus = "Master"
+	footstep_player.volume_db = -9.5
+	add_child(footstep_player)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -61,7 +76,8 @@ func _physics_process(delta: float) -> void:
 			move_vector.y -= 1.0
 
 	var speed: float = WALK_SPEED
-	if gameplay_enabled and Input.is_key_pressed(KEY_SHIFT):
+	var sprinting: bool = gameplay_enabled and Input.is_physical_key_pressed(KEY_SHIFT)
+	if sprinting:
 		speed = SPRINT_SPEED
 
 	var target_velocity: Vector3 = Vector3.ZERO
@@ -76,6 +92,7 @@ func _physics_process(delta: float) -> void:
 	velocity.z = move_toward(velocity.z, target_velocity.z, speed * 8.0 * delta)
 	move_and_slide()
 
+	_update_footsteps(delta, sprinting)
 	_update_focus()
 
 
@@ -85,6 +102,7 @@ func set_gameplay_enabled(value: bool) -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	else:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		footstep_time_left = 0.0
 		_set_current_interactable(null)
 
 
@@ -113,3 +131,20 @@ func _set_current_interactable(next_interactable: Interactable) -> void:
 		prompt_changed.emit("")
 	else:
 		prompt_changed.emit(current_interactable.get_prompt())
+
+
+func _update_footsteps(delta: float, sprinting: bool) -> void:
+	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+	var should_play := gameplay_enabled and is_on_floor() and horizontal_speed > 1.1
+	if not should_play:
+		footstep_time_left = 0.0
+		return
+
+	footstep_time_left -= delta * clampf(horizontal_speed / WALK_SPEED, 0.75, 1.45)
+	if footstep_time_left > 0.0:
+		return
+
+	footstep_time_left = FOOTSTEP_INTERVAL_SPRINT if sprinting else FOOTSTEP_INTERVAL_WALK
+	footstep_player.stream = FOOTSTEP_STREAMS[randi() % FOOTSTEP_STREAMS.size()]
+	footstep_player.pitch_scale = randf_range(0.96, 1.05)
+	footstep_player.play()

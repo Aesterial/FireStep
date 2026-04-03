@@ -1,11 +1,12 @@
 extends Node3D
 
 const Interactable = preload("res://scripts/interactable.gd")
-
-@export var workshop_props_scene: PackedScene
-@export var machine_visual_scene: PackedScene
-@export var wall_material: StandardMaterial3D
-@export var floor_material: StandardMaterial3D
+const FLOOR_TEXTURE: Texture2D = preload("res://assets/textures/variation-c.png")
+const WALL_TEXTURE: Texture2D = preload("res://assets/textures/variation-a.png")
+const CEILING_TEXTURE: Texture2D = preload("res://assets/textures/variation-b.png")
+const DETAIL_TANK_SCENE: PackedScene = preload("res://assets/models/detail-tank.glb")
+const CHIMNEY_SMALL_SCENE: PackedScene = preload("res://assets/models/chimney-small.glb")
+const CHIMNEY_MEDIUM_SCENE: PackedScene = preload("res://assets/models/chimney-medium.glb")
 
 @onready var world_environment: WorldEnvironment = $WorldEnvironment
 @onready var player: CharacterBody3D = $Player
@@ -26,15 +27,22 @@ var safe_zone_area: Area3D
 var machine_panel: Interactable
 var exit_panel: Interactable
 
+var floor_surface_material: StandardMaterial3D
+var wall_surface_material: StandardMaterial3D
+var ceiling_surface_material: StandardMaterial3D
+var beam_material: StandardMaterial3D
+var accent_metal_material: StandardMaterial3D
+
 var smoke_intensity: float = 0.55
 var smoke_target: float = 0.55
-var machine_color_target: Color = Color(0.31, 0.36, 0.42)
+var machine_color_target: Color = Color(0.33, 0.38, 0.44)
 var visual_state: String = "warning"
 
 
 func _ready() -> void:
 	_configure_player_spawn()
 	_configure_environment()
+	_configure_materials()
 	_build_world()
 	_connect_signals()
 	scenario.begin()
@@ -56,19 +64,30 @@ func _process(delta: float) -> void:
 
 
 func _configure_player_spawn() -> void:
-	player.global_position = Vector3(4.4, 0.0, 3.2)
-	player.rotation_degrees = Vector3(0.0, -118.0, 0.0)
+	player.global_position = Vector3(5.0, 0.0, 3.8)
+	player.rotation_degrees = Vector3(0.0, -126.0, 0.0)
 
 
 func _configure_environment() -> void:
 	var environment := Environment.new()
 	environment.background_mode = Environment.BG_COLOR
-	environment.background_color = Color(0.08, 0.09, 0.11)
+	environment.background_color = Color(0.07, 0.08, 0.1)
 	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	environment.ambient_light_color = Color(0.62, 0.68, 0.75)
-	environment.ambient_light_energy = 1.2
+	environment.ambient_light_color = Color(0.54, 0.6, 0.68)
+	environment.ambient_light_energy = 1.15
 	environment.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	environment.fog_enabled = true
+	environment.fog_light_color = Color(0.16, 0.18, 0.2)
+	environment.fog_density = 0.012
 	world_environment.environment = environment
+
+
+func _configure_materials() -> void:
+	floor_surface_material = _make_textured_material(FLOOR_TEXTURE, Vector3(4.4, 4.4, 1.0), 0.96, 0.0, Color(0.86, 0.88, 0.9))
+	wall_surface_material = _make_textured_material(WALL_TEXTURE, Vector3(2.3, 1.4, 1.0), 0.9, 0.0, Color(0.92, 0.93, 0.95))
+	ceiling_surface_material = _make_textured_material(CEILING_TEXTURE, Vector3(2.2, 2.2, 1.0), 0.92, 0.05, Color(0.86, 0.88, 0.9))
+	beam_material = _make_metal_material(Color(0.16, 0.18, 0.22), 0.62, 0.22)
+	accent_metal_material = _make_metal_material(Color(0.22, 0.26, 0.3), 0.45, 0.18)
 
 
 func _build_world() -> void:
@@ -79,129 +98,127 @@ func _build_world() -> void:
 	_build_room(world_root)
 	_build_guidance(world_root)
 	_build_machine(world_root)
+	_build_support_props(world_root)
 	_build_safe_zone(world_root)
 	_build_exit(world_root)
+	_build_lighting(world_root)
 
 
 func _build_room(parent: Node3D) -> void:
-	parent.add_child(_make_box_body("Floor", Vector3(15.0, 0.2, 11.0), Vector3(0.0, -0.1, 0.0), Color(0.18, 0.2, 0.22)))
-	parent.add_child(_make_box_body("BackWall", Vector3(15.0, 3.8, 0.3), Vector3(0.0, 1.9, -5.4), Color(0.23, 0.24, 0.28)))
-	parent.add_child(_make_box_body("FrontWall", Vector3(15.0, 3.8, 0.3), Vector3(0.0, 1.9, 5.4), Color(0.23, 0.24, 0.28)))
-	parent.add_child(_make_box_body("LeftWall", Vector3(0.3, 3.8, 11.0), Vector3(-7.35, 1.9, 0.0), Color(0.25, 0.26, 0.3)))
-	parent.add_child(_make_box_body("RightWall", Vector3(0.3, 3.8, 11.0), Vector3(7.35, 1.9, 0.0), Color(0.25, 0.26, 0.3)))
+	parent.add_child(_make_box_body("Floor", Vector3(16.0, 0.2, 12.0), Vector3(0.0, -0.1, 0.0), Color(0.2, 0.22, 0.25), floor_surface_material))
+	parent.add_child(_make_box_body("Ceiling", Vector3(16.0, 0.2, 12.0), Vector3(0.0, 4.0, 0.0), Color(0.18, 0.19, 0.22), ceiling_surface_material))
+	parent.add_child(_make_box_body("BackWall", Vector3(16.0, 4.2, 0.3), Vector3(0.0, 2.0, -5.85), Color(0.25, 0.26, 0.29), wall_surface_material))
+	parent.add_child(_make_box_body("FrontWall", Vector3(16.0, 4.2, 0.3), Vector3(0.0, 2.0, 5.85), Color(0.25, 0.26, 0.29), wall_surface_material))
+	parent.add_child(_make_box_body("LeftWallUpper", Vector3(0.3, 4.2, 6.0), Vector3(-7.85, 2.0, 2.95), Color(0.25, 0.26, 0.29), wall_surface_material))
+	parent.add_child(_make_box_body("LeftWallRear", Vector3(0.3, 4.2, 4.8), Vector3(-7.85, 2.0, -3.45), Color(0.25, 0.26, 0.29), wall_surface_material))
+	parent.add_child(_make_box_body("DoorLintel", Vector3(0.3, 1.0, 1.6), Vector3(-7.85, 3.5, -0.35), Color(0.17, 0.18, 0.2), beam_material))
+	parent.add_child(_make_box_body("RightWall", Vector3(0.3, 4.2, 12.0), Vector3(7.85, 2.0, 0.0), Color(0.25, 0.26, 0.29), wall_surface_material))
 
-	if workshop_props_scene != null:
-		var props_root := workshop_props_scene.instantiate()
-		parent.add_child(props_root)
-	else:
-		parent.add_child(_make_visual_box(Vector3(1.6, 1.2, 1.2), Vector3(-2.8, 0.6, -1.4), Color(0.36, 0.28, 0.18), false))
-		parent.add_child(_make_visual_box(Vector3(1.2, 0.8, 1.2), Vector3(-2.8, 1.55, -1.4), Color(0.39, 0.31, 0.2), false))
-		parent.add_child(_make_visual_box(Vector3(1.0, 1.0, 1.4), Vector3(5.0, 0.5, -3.8), Color(0.22, 0.24, 0.2), false))
+	for beam_z in [-4.3, -1.1, 2.1, 4.8]:
+		parent.add_child(_make_box_body("RoofBeam%0.1f" % beam_z, Vector3(15.5, 0.18, 0.38), Vector3(0.0, 3.55, beam_z), Color(0.16, 0.18, 0.22), beam_material))
+
+	for column in [
+		Vector3(-4.4, 1.75, -4.6),
+		Vector3(-4.4, 1.75, 4.6),
+		Vector3(3.6, 1.75, -4.6),
+		Vector3(3.6, 1.75, 4.6),
+	]:
+		parent.add_child(_make_box_body("Column", Vector3(0.35, 3.5, 0.35), column, Color(0.19, 0.2, 0.24), beam_material))
+
+	parent.add_child(_make_visual_box(Vector3(7.2, 0.16, 0.16), Vector3(-0.3, 3.78, -2.25), Color(0.24, 0.27, 0.32), false, accent_metal_material))
+	parent.add_child(_make_visual_box(Vector3(7.2, 0.16, 0.16), Vector3(-0.3, 3.78, 2.25), Color(0.24, 0.27, 0.32), false, accent_metal_material))
+	parent.add_child(_make_visual_box(Vector3(0.22, 0.22, 8.7), Vector3(6.85, 3.64, 0.1), Color(0.3, 0.32, 0.36), false, accent_metal_material))
+	parent.add_child(_make_visual_box(Vector3(0.22, 0.22, 8.7), Vector3(6.35, 3.64, 0.1), Color(0.3, 0.32, 0.36), false, accent_metal_material))
+
+	for window_pos in [
+		Vector3(0.0, 2.8, -5.68),
+		Vector3(0.0, 2.8, 5.68),
+	]:
+		parent.add_child(_make_visual_box(Vector3(5.6, 0.85, 0.04), window_pos, Color(0.32, 0.48, 0.66, 0.82), true))
 
 
 func _build_guidance(parent: Node3D) -> void:
-	parent.add_child(_make_visual_box(Vector3(6.8, 0.03, 0.35), Vector3(-0.9, 0.015, 1.3), Color(0.95, 0.74, 0.14), true))
-	parent.add_child(_make_visual_box(Vector3(0.35, 0.03, 3.3), Vector3(-4.15, 0.015, 2.7), Color(0.95, 0.74, 0.14), true))
-	parent.add_child(_make_visual_box(Vector3(0.35, 0.03, 4.0), Vector3(-4.8, 0.015, -1.0), Color(0.18, 0.72, 0.3), true))
-	parent.add_child(_make_visual_box(Vector3(2.0, 0.03, 0.35), Vector3(-5.8, 0.015, -3.0), Color(0.18, 0.72, 0.3), true))
+	parent.add_child(_make_visual_box(Vector3(7.3, 0.035, 0.38), Vector3(-0.65, 0.018, 1.45), Color(0.95, 0.74, 0.14), true))
+	parent.add_child(_make_visual_box(Vector3(0.38, 0.035, 3.8), Vector3(-4.15, 0.018, 2.7), Color(0.95, 0.74, 0.14), true))
+	parent.add_child(_make_visual_box(Vector3(0.38, 0.035, 4.0), Vector3(-4.95, 0.018, -0.9), Color(0.18, 0.72, 0.3), true))
+	parent.add_child(_make_visual_box(Vector3(2.2, 0.035, 0.38), Vector3(-5.95, 0.018, -3.0), Color(0.18, 0.72, 0.3), true))
+
+	for stripe_pos in [-2.0, -1.2, -0.4, 0.4, 1.2, 2.0]:
+		parent.add_child(_make_visual_box(Vector3(0.34, 0.03, 1.3), Vector3(2.9, 0.016, stripe_pos), Color(0.9, 0.66, 0.12), true, null, Vector3(0.0, 18.0, 0.0)))
 
 
 func _build_machine(parent: Node3D) -> void:
 	var machine_root := Node3D.new()
 	machine_root.name = "MachineRig"
-	machine_root.position = Vector3(1.6, 0.0, 0.2)
+	machine_root.position = Vector3(1.6, 0.0, 0.15)
 	parent.add_child(machine_root)
 
-	machine_body_material = StandardMaterial3D.new()
-	machine_body_material.albedo_color = Color(0.31, 0.36, 0.42)
-	machine_body_material.metallic = 0.15
-	machine_body_material.roughness = 0.55
-	if machine_visual_scene != null:
-		var machine_visual := machine_visual_scene.instantiate()
-		machine_root.add_child(machine_visual)
+	machine_body_material = _make_metal_material(Color(0.33, 0.38, 0.44), 0.5, 0.18)
 
-		# Добавляем коллизию для импортированной модели, если её нет
-		var static_body := StaticBody3D.new()
-		machine_visual.add_child(static_body)
-		var collision := CollisionShape3D.new()
-		var box_shape := BoxShape3D.new()
-		box_shape.size = Vector3(2.0, 2.0, 2.0) # Примерный размер для станка
-		collision.shape = box_shape
-		collision.position = Vector3(0, 1.0, 0)
-		static_body.add_child(collision)
-	else:
-		var machine_body := StaticBody3D.new()
-		machine_body.name = "MachineBody"
-		machine_root.add_child(machine_body)
+	var plinth_material := _make_metal_material(Color(0.14, 0.16, 0.2), 0.72, 0.08)
+	machine_root.add_child(_make_visual_box(Vector3(3.3, 0.18, 2.6), Vector3(0.0, 0.09, 0.0), Color(0.14, 0.16, 0.2), false, plinth_material))
 
-		var body_mesh := MeshInstance3D.new()
-		var body_shape := BoxMesh.new()
-		body_shape.size = Vector3(2.6, 1.0, 1.8)
-		body_mesh.mesh = body_shape
-		body_mesh.material_override = machine_body_material
-		body_mesh.position = Vector3(0.0, 0.5, 0.0)
-		machine_body.add_child(body_mesh)
+	var machine_body := StaticBody3D.new()
+	machine_body.name = "MachineBody"
+	machine_root.add_child(machine_body)
 
-		var body_collision := CollisionShape3D.new()
-		var body_collision_shape := BoxShape3D.new()
-		body_collision_shape.size = Vector3(2.6, 1.0, 1.8)
-		body_collision.shape = body_collision_shape
-		body_collision.position = Vector3(0.0, 0.5, 0.0)
-		machine_body.add_child(body_collision)
+	var body_mesh := MeshInstance3D.new()
+	var body_shape := BoxMesh.new()
+	body_shape.size = Vector3(2.8, 1.0, 1.9)
+	body_mesh.mesh = body_shape
+	body_mesh.material_override = machine_body_material
+	body_mesh.position = Vector3(0.0, 0.62, 0.0)
+	machine_body.add_child(body_mesh)
 
+	var body_collision := CollisionShape3D.new()
+	var body_collision_shape := BoxShape3D.new()
+	body_collision_shape.size = Vector3(2.8, 1.0, 1.9)
+	body_collision.shape = body_collision_shape
+	body_collision.position = Vector3(0.0, 0.62, 0.0)
+	machine_body.add_child(body_collision)
+
+	for tank_position in [Vector3(-0.7, 1.28, -0.46), Vector3(-0.7, 1.28, 0.46)]:
 		var tank_mesh := MeshInstance3D.new()
 		var tank := CylinderMesh.new()
-		tank.top_radius = 0.42
-		tank.bottom_radius = 0.42
-		tank.height = 1.7
+		tank.top_radius = 0.33
+		tank.bottom_radius = 0.33
+		tank.height = 1.75
 		tank_mesh.mesh = tank
 		tank_mesh.material_override = machine_body_material
 		tank_mesh.rotation_degrees = Vector3(0.0, 0.0, 90.0)
-		tank_mesh.position = Vector3(-0.3, 1.15, 0.0)
+		tank_mesh.position = tank_position
 		machine_root.add_child(tank_mesh)
 
-		var cabinet := MeshInstance3D.new()
-		var cabinet_mesh := BoxMesh.new()
-		cabinet_mesh.size = Vector3(0.9, 1.1, 0.8)
-		cabinet.mesh = cabinet_mesh
-		cabinet.material_override = machine_body_material
-		cabinet.position = Vector3(0.85, 1.05, 0.45)
-		machine_root.add_child(cabinet)
+	var cabinet_material := _make_metal_material(Color(0.2, 0.24, 0.28), 0.36, 0.12)
+	machine_root.add_child(_make_visual_box(Vector3(0.9, 1.34, 0.84), Vector3(1.0, 0.86, 0.52), Color(0.2, 0.24, 0.28), false, cabinet_material))
+	machine_root.add_child(_make_visual_box(Vector3(0.84, 0.22, 2.1), Vector3(0.36, 1.24, 0.0), Color(0.2, 0.24, 0.28), false, cabinet_material))
+	machine_root.add_child(_make_visual_box(Vector3(1.75, 0.12, 0.12), Vector3(-1.02, 1.82, 0.0), Color(0.24, 0.27, 0.31), false, accent_metal_material))
+	machine_root.add_child(_make_visual_box(Vector3(0.12, 1.32, 0.12), Vector3(-1.85, 1.22, 0.0), Color(0.24, 0.27, 0.31), false, accent_metal_material))
 
-		var pipe := MeshInstance3D.new()
-		var pipe_mesh := CylinderMesh.new()
-		pipe_mesh.top_radius = 0.08
-		pipe_mesh.bottom_radius = 0.08
-		pipe_mesh.height = 1.6
-		pipe.mesh = pipe_mesh
-		pipe.material_override = machine_body_material
-		pipe.position = Vector3(-0.95, 1.4, 0.0)
-		machine_root.add_child(pipe)
+	warning_indicator_material = _make_metal_material(Color(1.0, 0.2, 0.1), 0.24, 0.0)
+	warning_indicator_material.emission_enabled = true
+	warning_indicator_material.emission = Color(1.0, 0.2, 0.1)
+	warning_indicator_material.emission_energy_multiplier = 2.0
 
 	var warning_indicator := MeshInstance3D.new()
 	var warning_mesh := SphereMesh.new()
 	warning_mesh.radius = 0.16
 	warning_mesh.height = 0.32
 	warning_indicator.mesh = warning_mesh
-	warning_indicator_material = StandardMaterial3D.new()
-	warning_indicator_material.albedo_color = Color(1.0, 0.2, 0.1)
-	warning_indicator_material.emission_enabled = true
-	warning_indicator_material.emission = Color(1.0, 0.2, 0.1)
-	warning_indicator_material.emission_energy_multiplier = 2.0
 	warning_indicator.material_override = warning_indicator_material
-	warning_indicator.position = Vector3(0.85, 1.85, 0.45)
+	warning_indicator.position = Vector3(1.05, 2.1, 0.52)
 	machine_root.add_child(warning_indicator)
 
 	warning_light = OmniLight3D.new()
-	warning_light.position = Vector3(0.85, 1.9, 0.45)
+	warning_light.position = Vector3(1.05, 2.1, 0.52)
 	warning_light.light_color = Color(1.0, 0.18, 0.12)
 	warning_light.light_energy = 4.0
-	warning_light.omni_range = 5.0
+	warning_light.omni_range = 5.4
 	machine_root.add_child(warning_light)
 
 	smoke_root = Node3D.new()
 	smoke_root.name = "SmokeRoot"
-	smoke_root.position = Vector3(-0.85, 1.9, 0.0)
+	smoke_root.position = Vector3(-1.75, 1.9, 0.0)
 	machine_root.add_child(smoke_root)
 
 	for index in range(5):
@@ -222,41 +239,65 @@ func _build_machine(parent: Node3D) -> void:
 		smoke_puffs.append(puff)
 		smoke_materials.append(puff_material)
 
+	emergency_stop_material = _make_panel_material(Color(0.95, 0.15, 0.12))
 	var emergency_stop := _make_interactable_panel(
 		"EmergencyStop",
 		"emergency_stop",
 		"[E] Аварийная остановка",
-		Vector3(2.05, 1.1, -0.8),
+		Vector3(2.25, 1.14, -0.92),
 		Vector3(0.42, 0.42, 0.42),
-		Color(0.95, 0.15, 0.12),
+		emergency_stop_material,
 		"СТОП"
 	)
-	emergency_stop_material = emergency_stop.get_meta("display_material") as StandardMaterial3D
 	machine_root.add_child(emergency_stop)
 
 	machine_panel = _make_interactable_panel(
 		"MachinePanel",
 		"machine_panel",
 		"[E] Пытаться спасать оборудование",
-		Vector3(1.5, 1.0, 0.85),
-		Vector3(0.6, 0.6, 0.2),
-		Color(0.95, 0.68, 0.08),
+		Vector3(1.52, 1.08, 1.05),
+		Vector3(0.7, 0.65, 0.22),
+		_make_panel_material(Color(0.95, 0.68, 0.08)),
 		"ЩИТ"
 	)
 	machine_root.add_child(machine_panel)
 
-	machine_root.add_child(_make_label("Компрессор", Vector3(0.0, 2.55, 0.0), Color(1.0, 0.96, 0.82)))
+	machine_root.add_child(_make_label("GEN-01 / Компрессор", Vector3(0.15, 2.75, 0.0), Color(1.0, 0.96, 0.82), 38))
+
+
+func _build_support_props(parent: Node3D) -> void:
+	var catwalk_material := _make_metal_material(Color(0.18, 0.2, 0.24), 0.78, 0.06)
+	parent.add_child(_make_visual_box(Vector3(4.6, 0.16, 1.55), Vector3(4.9, 0.08, -4.1), Color(0.18, 0.2, 0.24), false, catwalk_material))
+	parent.add_child(_make_visual_box(Vector3(2.2, 1.5, 0.16), Vector3(4.9, 0.92, -4.8), Color(0.24, 0.27, 0.31), false, accent_metal_material))
+	parent.add_child(_make_visual_box(Vector3(0.16, 1.2, 1.55), Vector3(6.95, 0.68, -4.1), Color(0.24, 0.27, 0.31), false, accent_metal_material))
+
+	for prop in [
+		{"position": Vector3(-5.85, 0.0, -4.1), "scale": Vector3(2.1, 2.1, 2.1), "rotation": Vector3(0.0, 18.0, 0.0)},
+		{"position": Vector3(-5.25, 0.0, 4.25), "scale": Vector3(2.0, 2.0, 2.0), "rotation": Vector3(0.0, -20.0, 0.0)},
+	]:
+		parent.add_child(_make_scene_prop(DETAIL_TANK_SCENE, prop.position, prop.scale, prop.rotation))
+
+	parent.add_child(_make_scene_prop(CHIMNEY_SMALL_SCENE, Vector3(6.2, 0.0, 4.35), Vector3(1.45, 1.45, 1.45), Vector3(0.0, 0.0, 0.0)))
+	parent.add_child(_make_scene_prop(CHIMNEY_MEDIUM_SCENE, Vector3(5.0, 0.0, 4.2), Vector3(1.25, 1.25, 1.25), Vector3(0.0, 0.0, 0.0)))
+
+	for rack_pos in [Vector3(5.75, 0.58, 2.9), Vector3(5.75, 0.58, 1.25)]:
+		parent.add_child(_make_visual_box(Vector3(1.3, 1.16, 0.82), rack_pos, Color(0.24, 0.27, 0.31), false, accent_metal_material))
+		parent.add_child(_make_visual_box(Vector3(1.05, 0.22, 0.66), rack_pos + Vector3(0.0, 0.52, 0.0), Color(0.82, 0.56, 0.12), false))
+
+	parent.add_child(_make_visual_box(Vector3(1.95, 0.88, 0.92), Vector3(-5.6, 0.44, 1.25), Color(0.3, 0.22, 0.16), false))
+	parent.add_child(_make_visual_box(Vector3(1.35, 0.14, 0.96), Vector3(-5.6, 0.95, 1.25), Color(0.22, 0.24, 0.26), false, accent_metal_material))
+	parent.add_child(_make_visual_box(Vector3(1.55, 1.05, 0.78), Vector3(-5.45, 0.52, 0.1), Color(0.18, 0.2, 0.24), false, accent_metal_material))
 
 
 func _build_safe_zone(parent: Node3D) -> void:
 	safe_zone_area = Area3D.new()
 	safe_zone_area.name = "SafeZone"
-	safe_zone_area.position = Vector3(-4.8, 0.0, 2.8)
+	safe_zone_area.position = Vector3(-4.95, 0.0, 2.95)
 	parent.add_child(safe_zone_area)
 
 	var safe_shape := CollisionShape3D.new()
 	var safe_collision := CylinderShape3D.new()
-	safe_collision.radius = 1.4
+	safe_collision.radius = 1.45
 	safe_collision.height = 2.4
 	safe_shape.shape = safe_collision
 	safe_shape.position = Vector3(0.0, 1.2, 0.0)
@@ -264,9 +305,9 @@ func _build_safe_zone(parent: Node3D) -> void:
 
 	var safe_marker := MeshInstance3D.new()
 	var safe_mesh := CylinderMesh.new()
-	safe_mesh.top_radius = 1.6
-	safe_mesh.bottom_radius = 1.6
-	safe_mesh.height = 0.04
+	safe_mesh.top_radius = 1.7
+	safe_mesh.bottom_radius = 1.7
+	safe_mesh.height = 0.05
 	safe_marker.mesh = safe_mesh
 	safe_zone_material = StandardMaterial3D.new()
 	safe_zone_material.albedo_color = Color(0.15, 0.58, 0.22, 0.75)
@@ -275,44 +316,66 @@ func _build_safe_zone(parent: Node3D) -> void:
 	safe_zone_material.emission = Color(0.22, 0.85, 0.35)
 	safe_zone_material.emission_energy_multiplier = 1.8
 	safe_marker.material_override = safe_zone_material
-	safe_marker.global_position = Vector3(-4.8, 0.02, 2.8)
+	safe_marker.global_position = Vector3(-4.95, 0.03, 2.95)
 	parent.add_child(safe_marker)
 
-	parent.add_child(_make_label("БЕЗОПАСНАЯ ЗОНА", Vector3(-4.8, 0.16, 4.0), Color(0.72, 1.0, 0.76)))
+	parent.add_child(_make_visual_box(Vector3(3.2, 0.12, 0.12), Vector3(-4.95, 0.8, 1.35), Color(0.28, 0.72, 0.38), false, accent_metal_material))
+	parent.add_child(_make_label("БЕЗОПАСНАЯ ЗОНА", Vector3(-4.95, 0.22, 4.3), Color(0.72, 1.0, 0.76), 34))
 
 
 func _build_exit(parent: Node3D) -> void:
+	parent.add_child(_make_box_body("ExitFrameRear", Vector3(0.2, 2.45, 1.95), Vector3(-7.45, 1.22, -0.35), Color(0.16, 0.18, 0.2), beam_material))
+
 	var door := MeshInstance3D.new()
 	var door_mesh := BoxMesh.new()
-	door_mesh.size = Vector3(0.2, 2.3, 1.7)
+	door_mesh.size = Vector3(0.14, 2.3, 1.68)
 	door.mesh = door_mesh
-	var door_material := StandardMaterial3D.new()
-	door_material.albedo_color = Color(0.12, 0.2, 0.18)
-	door_material.roughness = 0.7
+	var door_material := _make_metal_material(Color(0.11, 0.18, 0.17), 0.65, 0.06)
 	door.material_override = door_material
-	door.position = Vector3(-7.0, 1.15, -3.0)
+	door.position = Vector3(-7.18, 1.15, -0.35)
 	parent.add_child(door)
 
+	exit_panel_material = _make_panel_material(Color(0.82, 0.2, 0.15))
 	exit_panel = _make_interactable_panel(
 		"ExitPanel",
 		"exit",
 		"[E] Выйти из цеха",
-		Vector3(-6.58, 1.15, -3.0),
-		Vector3(0.25, 0.48, 0.48),
-		Color(0.82, 0.2, 0.15),
+		Vector3(-6.72, 1.15, -0.35),
+		Vector3(0.25, 0.52, 0.52),
+		exit_panel_material,
 		"ВЫХОД"
 	)
-	exit_panel_material = exit_panel.get_meta("display_material") as StandardMaterial3D
 	parent.add_child(exit_panel)
 
 	exit_light = OmniLight3D.new()
-	exit_light.position = Vector3(-6.55, 2.0, -3.0)
+	exit_light.position = Vector3(-6.9, 2.05, -0.35)
 	exit_light.light_color = Color(0.92, 0.16, 0.12)
 	exit_light.light_energy = 2.2
-	exit_light.omni_range = 4.5
+	exit_light.omni_range = 4.2
 	parent.add_child(exit_light)
 
-	parent.add_child(_make_label("ВЫХОД", Vector3(-6.15, 2.7, -3.0), Color(0.9, 1.0, 0.9)))
+	parent.add_child(_make_label("ВЫХОД В ПЕРЕХОД", Vector3(-5.85, 2.72, -0.35), Color(0.9, 1.0, 0.9), 32))
+
+
+func _build_lighting(parent: Node3D) -> void:
+	for light_pos in [
+		Vector3(-3.8, 3.7, -2.25),
+		Vector3(-3.8, 3.7, 2.25),
+		Vector3(2.2, 3.7, -2.25),
+		Vector3(2.2, 3.7, 2.25),
+	]:
+		var strip_root := Node3D.new()
+		strip_root.position = light_pos
+		parent.add_child(strip_root)
+
+		strip_root.add_child(_make_visual_box(Vector3(2.1, 0.08, 0.42), Vector3.ZERO, Color(0.88, 0.92, 0.96), true))
+
+		var lamp := OmniLight3D.new()
+		lamp.position = Vector3(0.0, -0.2, 0.0)
+		lamp.light_color = Color(0.9, 0.94, 1.0)
+		lamp.light_energy = 1.6
+		lamp.omni_range = 6.4
+		strip_root.add_child(lamp)
 
 
 func _connect_signals() -> void:
@@ -350,15 +413,15 @@ func _on_result_requested(success: bool, title: String, body: String) -> void:
 	player.set_gameplay_enabled(false)
 	if success:
 		GameSession.set_workshop_summary(body)
-		hud.show_feedback("Переход к этапу эвакуации...", "info")
-		_queue_scene_change("res://scenes/Evacuation.tscn", 0.9)
+		hud.show_feedback("Переход к резервному генератору...", "info")
+		_queue_scene_change("res://scenes/SecondaryGenerator.tscn", 0.9)
 	else:
 		GameSession.set_final_result(
 			false,
 			title,
 			body,
 			[
-				"Ошибка допущена на этапе реакции в цехе",
+				"Ошибка допущена на первом этапе в цехе",
 				"Приоритет безопасности людей не был соблюдён"
 			]
 		)
@@ -372,7 +435,7 @@ func _apply_visual_state(state: String) -> void:
 	match state:
 		"warning":
 			smoke_target = 0.55
-			machine_color_target = Color(0.31, 0.36, 0.42)
+			machine_color_target = Color(0.33, 0.38, 0.44)
 			emergency_stop_material.albedo_color = Color(0.95, 0.15, 0.12)
 			exit_panel_material.albedo_color = Color(0.82, 0.2, 0.15)
 			safe_zone_material.emission_energy_multiplier = 1.8
@@ -382,9 +445,10 @@ func _apply_visual_state(state: String) -> void:
 			emergency_stop_material.albedo_color = Color(0.58, 0.12, 0.1)
 			safe_zone_material.emission_energy_multiplier = 2.4
 		"alarm_raised":
-			smoke_target = 0.34
+			smoke_target = 0.32
 			machine_color_target = Color(0.28, 0.33, 0.38)
 			exit_panel_material.albedo_color = Color(0.16, 0.7, 0.26)
+			exit_panel_material.emission = Color(0.16, 0.7, 0.26)
 			exit_light.light_color = Color(0.22, 0.92, 0.35)
 			exit_light.light_energy = 4.5
 			safe_zone_material.emission_energy_multiplier = 1.5
@@ -392,11 +456,13 @@ func _apply_visual_state(state: String) -> void:
 			smoke_target = 1.15
 			machine_color_target = Color(0.46, 0.2, 0.18)
 			exit_panel_material.albedo_color = Color(0.82, 0.2, 0.15)
+			exit_panel_material.emission = Color(0.82, 0.2, 0.15)
 			safe_zone_material.emission_energy_multiplier = 0.8
 		"success":
 			smoke_target = 0.2
 			machine_color_target = Color(0.24, 0.31, 0.28)
 			exit_panel_material.albedo_color = Color(0.16, 0.7, 0.26)
+			exit_panel_material.emission = Color(0.16, 0.7, 0.26)
 			exit_light.light_color = Color(0.22, 0.92, 0.35)
 			exit_light.light_energy = 5.0
 			safe_zone_material.emission_energy_multiplier = 1.2
@@ -464,7 +530,13 @@ func _queue_scene_change(path: String, delay: float) -> void:
 	)
 
 
-func _make_box_body(name: String, size: Vector3, position: Vector3, color: Color) -> StaticBody3D:
+func _make_box_body(
+	name: String,
+	size: Vector3,
+	position: Vector3,
+	color: Color,
+	material: Material = null
+) -> StaticBody3D:
 	var body := StaticBody3D.new()
 	body.name = name
 	body.position = position
@@ -473,18 +545,7 @@ func _make_box_body(name: String, size: Vector3, position: Vector3, color: Color
 	var mesh := BoxMesh.new()
 	mesh.size = size
 	mesh_instance.mesh = mesh
-
-	var material: StandardMaterial3D
-	if name == "Floor" and floor_material != null:
-		material = floor_material
-	elif name.contains("Wall") and wall_material != null:
-		material = wall_material
-	else:
-		material = StandardMaterial3D.new()
-		material.albedo_color = color
-		material.roughness = 0.95
-
-	mesh_instance.material_override = material
+	mesh_instance.material_override = material if material != null else _make_metal_material(color, 0.9, 0.04)
 	body.add_child(mesh_instance)
 
 	var collision := CollisionShape3D.new()
@@ -496,21 +557,33 @@ func _make_box_body(name: String, size: Vector3, position: Vector3, color: Color
 	return body
 
 
-func _make_visual_box(size: Vector3, position: Vector3, color: Color, emissive: bool) -> MeshInstance3D:
+func _make_visual_box(
+	size: Vector3,
+	position: Vector3,
+	color: Color,
+	emissive: bool,
+	material: Material = null,
+	rotation_degrees: Vector3 = Vector3.ZERO
+) -> MeshInstance3D:
 	var mesh_instance := MeshInstance3D.new()
 	var mesh := BoxMesh.new()
 	mesh.size = size
 	mesh_instance.mesh = mesh
 	mesh_instance.position = position
+	mesh_instance.rotation_degrees = rotation_degrees
 
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	material.roughness = 0.7
-	if emissive:
-		material.emission_enabled = true
-		material.emission = color
-		material.emission_energy_multiplier = 1.0
-	mesh_instance.material_override = material
+	var applied_material := material
+	if applied_material == null:
+		var fallback := StandardMaterial3D.new()
+		fallback.albedo_color = color
+		fallback.roughness = 0.7
+		if emissive:
+			fallback.emission_enabled = true
+			fallback.emission = color
+			fallback.emission_energy_multiplier = 1.0
+		applied_material = fallback
+
+	mesh_instance.material_override = applied_material
 	return mesh_instance
 
 
@@ -520,7 +593,7 @@ func _make_interactable_panel(
 	prompt_text: String,
 	position: Vector3,
 	size: Vector3,
-	color: Color,
+	material: StandardMaterial3D,
 	label_text: String
 ) -> Interactable:
 	var area := Interactable.new()
@@ -539,28 +612,66 @@ func _make_interactable_panel(
 	var mesh := BoxMesh.new()
 	mesh.size = size
 	mesh_instance.mesh = mesh
-	var material := StandardMaterial3D.new()
-	material.albedo_color = color
-	material.roughness = 0.4
-	material.emission_enabled = true
-	material.emission = color
-	material.emission_energy_multiplier = 0.8
 	mesh_instance.material_override = material
 	area.add_child(mesh_instance)
 
-	area.add_child(_make_label(label_text, Vector3(0.0, 0.52, 0.0), Color(1.0, 1.0, 1.0)))
-	area.set_meta("display_material", material)
+	area.add_child(_make_label(label_text, Vector3(0.0, 0.56, 0.0), Color(1.0, 1.0, 1.0), 34))
 	return area
 
 
-func _make_label(text: String, position: Vector3, color: Color) -> Label3D:
+func _make_label(text: String, position: Vector3, color: Color, font_size: int) -> Label3D:
 	var label := Label3D.new()
 	label.text = text
 	label.position = position
 	label.modulate = color
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	label.pixel_size = 0.01
-	label.font_size = 40
+	label.font_size = font_size
 	label.outline_size = 8
 	label.outline_modulate = Color(0.0, 0.0, 0.0, 0.85)
 	return label
+
+
+func _make_scene_prop(scene: PackedScene, position: Vector3, scale_value: Vector3, rotation_value: Vector3) -> Node3D:
+	var root := Node3D.new()
+	root.position = position
+	root.scale = scale_value
+	root.rotation_degrees = rotation_value
+	root.add_child(scene.instantiate())
+	return root
+
+
+func _make_textured_material(
+	texture: Texture2D,
+	uv_scale: Vector3,
+	roughness: float,
+	metallic: float,
+	tint: Color
+) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = tint
+	material.albedo_texture = texture
+	material.uv1_scale = uv_scale
+	material.roughness = roughness
+	material.metallic = metallic
+	material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	return material
+
+
+func _make_metal_material(color: Color, roughness: float, metallic: float) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = roughness
+	material.metallic = metallic
+	return material
+
+
+func _make_panel_material(color: Color) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = 0.34
+	material.metallic = 0.06
+	material.emission_enabled = true
+	material.emission = color
+	material.emission_energy_multiplier = 0.95
+	return material

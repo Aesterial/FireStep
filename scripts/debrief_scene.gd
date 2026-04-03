@@ -1,7 +1,12 @@
 extends Control
 
+const UISkin = preload("res://scripts/ui_skin.gd")
+
+var click_player: AudioStreamPlayer
+
 
 func _ready() -> void:
+	click_player = UISkin.make_click_player(self)
 	_build_ui()
 
 
@@ -13,34 +18,21 @@ func _build_ui() -> void:
 
 	var shell := MarginContainer.new()
 	shell.set_anchors_preset(Control.PRESET_FULL_RECT)
-	shell.add_theme_constant_override("margin_left", 60)
-	shell.add_theme_constant_override("margin_top", 48)
-	shell.add_theme_constant_override("margin_right", 60)
-	shell.add_theme_constant_override("margin_bottom", 48)
+	shell.add_theme_constant_override("margin_left", 44)
+	shell.add_theme_constant_override("margin_top", 36)
+	shell.add_theme_constant_override("margin_right", 44)
+	shell.add_theme_constant_override("margin_bottom", 36)
 	add_child(shell)
 
 	var outer_vbox := VBoxContainer.new()
-	outer_vbox.add_theme_constant_override("separation", 24)
+	outer_vbox.add_theme_constant_override("separation", 22)
 	shell.add_child(outer_vbox)
 
-	var scroll := ScrollContainer.new()
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	outer_vbox.add_child(scroll)
-
+	var status_tint := Color(0.3, 0.86, 0.44, 0.88) if GameSession.final_success else Color(0.92, 0.34, 0.26, 0.9)
 	var card := PanelContainer.new()
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.09, 0.1, 0.14, 0.96)
-	style.border_color = Color(0.2, 0.72, 0.34) if GameSession.final_success else Color(0.84, 0.22, 0.16)
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(14)
-	style.content_margin_left = 22
-	style.content_margin_top = 22
-	style.content_margin_right = 22
-	style.content_margin_bottom = 22
-	card.add_theme_stylebox_override("panel", style)
-	scroll.add_child(card)
+	UISkin.apply_panel(card, status_tint, Vector4(24.0, 20.0, 24.0, 20.0))
+	outer_vbox.add_child(card)
 
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 14)
@@ -48,63 +40,62 @@ func _build_ui() -> void:
 
 	var eyebrow := Label.new()
 	eyebrow.text = "Итоги тренировки"
-	eyebrow.add_theme_font_size_override("font_size", 18)
-	eyebrow.add_theme_color_override("font_color", Color(0.82, 0.88, 0.98))
+	UISkin.apply_title(eyebrow, 16, Color(1.0, 0.98, 0.9))
 	box.add_child(eyebrow)
 
 	var title := Label.new()
 	title.text = GameSession.final_title
-	title.add_theme_font_size_override("font_size", 34)
-	title.add_theme_color_override(
-		"font_color",
-		Color(0.88, 1.0, 0.9) if GameSession.final_success else Color(1.0, 0.88, 0.88)
+	UISkin.apply_title(
+		title,
+		30,
+		Color(0.9, 1.0, 0.92) if GameSession.final_success else Color(1.0, 0.9, 0.9)
 	)
 	box.add_child(title)
 
 	var body := Label.new()
 	body.text = GameSession.final_body
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.add_theme_font_size_override("font_size", 20)
-	body.add_theme_color_override("font_color", Color(0.93, 0.96, 1.0))
+	UISkin.apply_body(body, 19, Color(0.96, 0.98, 1.0))
 	box.add_child(body)
 
 	if not GameSession.workshop_summary.is_empty() and GameSession.final_success:
+		box.add_child(UISkin.make_divider())
 		var stage_note := Label.new()
 		stage_note.text = "Промежуточный итог: %s" % GameSession.workshop_summary
 		stage_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		stage_note.add_theme_font_size_override("font_size", 16)
-		stage_note.add_theme_color_override("font_color", Color(0.76, 0.84, 0.93))
+		UISkin.apply_body(stage_note, 15, Color(0.94, 0.97, 1.0))
 		box.add_child(stage_note)
+
+	box.add_child(UISkin.make_divider())
 
 	var highlights_title := Label.new()
 	highlights_title.text = "Ключевые выводы"
-	highlights_title.add_theme_font_size_override("font_size", 24)
-	highlights_title.add_theme_color_override("font_color", Color(0.97, 0.84, 0.68))
+	UISkin.apply_title(highlights_title, 22, Color(1.0, 0.98, 0.92))
 	box.add_child(highlights_title)
 
 	for item in GameSession.final_highlights:
 		var bullet := Label.new()
 		bullet.text = "• %s" % item
 		bullet.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		bullet.add_theme_font_size_override("font_size", 18)
-		bullet.add_theme_color_override("font_color", Color(0.9, 0.95, 1.0))
+		UISkin.apply_body(bullet, 17, Color(0.96, 0.98, 1.0))
 		box.add_child(bullet)
 
 	var hint := Label.new()
-	hint.text = "Импорт и замена визуальных ассетов описаны в docs/ASSET_PIPELINE.md."
+	hint.text = "Проверка маршрута и список использованных ассетов описаны в docs/TEST_PLAN.md и docs/ASSETS.md."
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	hint.add_theme_font_size_override("font_size", 16)
-	hint.add_theme_color_override("font_color", Color(0.77, 0.83, 0.91))
+	UISkin.apply_body(hint, 15, Color(0.94, 0.97, 1.0))
 	box.add_child(hint)
 
 	var buttons := HBoxContainer.new()
 	buttons.alignment = BoxContainer.ALIGNMENT_CENTER
-	buttons.add_theme_constant_override("separation", 12)
+	buttons.add_theme_constant_override("separation", 14)
 	outer_vbox.add_child(buttons)
 
 	var restart := Button.new()
 	restart.text = "Повторить тренировку [R]"
-	restart.custom_minimum_size = Vector2(250, 48)
+	restart.custom_minimum_size = Vector2(280, 50)
+	UISkin.apply_button(restart, "green")
+	_wire_click(restart)
 
 	var restart_shortcut := Shortcut.new()
 	var r_key := InputEventKey.new()
@@ -117,7 +108,9 @@ func _build_ui() -> void:
 
 	var briefing := Button.new()
 	briefing.text = "Вернуться к брифингу [Enter / Space]"
-	briefing.custom_minimum_size = Vector2(250, 48)
+	briefing.custom_minimum_size = Vector2(320, 50)
+	UISkin.apply_button(briefing, "blue")
+	_wire_click(briefing)
 
 	var briefing_shortcut := Shortcut.new()
 	var enter_key := InputEventKey.new()
@@ -140,3 +133,10 @@ func _on_restart_pressed() -> void:
 func _on_back_pressed() -> void:
 	GameSession.reset_session()
 	get_tree().change_scene_to_file("res://scenes/Briefing.tscn")
+
+
+func _wire_click(button: BaseButton) -> void:
+	button.pressed.connect(func() -> void:
+		if click_player != null:
+			click_player.play()
+	)
