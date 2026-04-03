@@ -1,3 +1,3 @@
-package db
+package client
 
-//go::generate sqlc
+//go::generate sqlc generate -f "../../../sqlc.yaml"
