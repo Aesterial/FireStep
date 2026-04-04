@@ -1,4 +1,4 @@
-extends Node3D
+﻿extends Node3D
 
 const Interactable = preload("res://scripts/interactable.gd")
 const FLOOR_TEXTURE: Texture2D = preload("res://assets/textures/prototype/dark_04.png")
@@ -7,9 +7,9 @@ const CEILING_TEXTURE: Texture2D = preload("res://assets/textures/prototype/dark
 const DETAIL_TANK_SCENE: PackedScene = preload("res://assets/models/detail-tank.glb")
 const CHIMNEY_SMALL_SCENE: PackedScene = preload("res://assets/models/chimney-small.glb")
 
-@onready var world_environment: WorldEnvironment = $WorldEnvironment
-@onready var player: CharacterBody3D = $Player
-@onready var hud: CanvasLayer = $HUD
+@onready var world_environment: WorldEnvironment = 
+@onready var player: CharacterBody3D = 
+@onready var hud: CanvasLayer = 
 
 var blocks_disabled: int = 0
 var block_materials: Array[StandardMaterial3D] = []
@@ -61,10 +61,10 @@ func _build_world() -> void:
 
 	root.add_child(_make_box_body(Vector3(12.0, 0.2, 12.0), Vector3(0.0, -0.1, 0.0), floor_material))
 	root.add_child(_make_box_body(Vector3(12.0, 0.2, 12.0), Vector3(0.0, 4.0, 0.0), ceiling_material))
-	root.add_child(_make_box_body(Vector3(12.0, 4.0, 0.3), Vector3(0.0, 2.0, -5.85), wall_material))
-	root.add_child(_make_box_body(Vector3(12.0, 4.0, 0.3), Vector3(0.0, 2.0, 5.85), wall_material))
-	root.add_child(_make_box_body(Vector3(0.3, 4.0, 12.0), Vector3(5.85, 2.0, 0.0), wall_material))
-	root.add_child(_make_box_body(Vector3(0.3, 4.0, 12.0), Vector3(-5.85, 2.0, 0.0), wall_material))
+	root.add_child(_make_box_body(Vector3(12.0, 4.0, 0.3), Vector3(0.0, 1.9, -4.35), wall_material))
+	root.add_child(_make_box_body(Vector3(11.0, 4.0, 0.3), Vector3(0.0, 1.9, 4.35), wall_material))
+	root.add_child(_make_box_body(Vector3(0.3, 4.0, 12.0), Vector3(5.35, 1.9, 0.0), wall_material))
+	root.add_child(_make_box_body(Vector3(0.3, 4.0, 12.0), Vector3(-5.35, 1.9, 0.0), wall_material))
 
 	_build_equipment(root)
 	_build_exit(root)
@@ -78,20 +78,18 @@ func _build_props(parent: Node3D) -> void:
 
 	for beam_z in [-3.5, 0.0, 3.5]:
 		parent.add_child(_make_box_body(Vector3(11.6, 0.2, 0.4), Vector3(0.0, 3.8, beam_z), dark_metal))
-	
+
 	parent.add_child(_make_scene_prop(DETAIL_TANK_SCENE, Vector3(-4.8, 0.0, 4.8), Vector3(2.5, 2.5, 2.5), Vector3(0.0, 45.0, 0.0)))
 	parent.add_child(_make_scene_prop(DETAIL_TANK_SCENE, Vector3(4.8, 0.0, 4.8), Vector3(2.5, 2.5, 2.5), Vector3(0.0, -45.0, 0.0)))
-	
+
 	parent.add_child(_make_scene_prop(CHIMNEY_SMALL_SCENE, Vector3(-4.8, 0.0, -4.5), Vector3(2.0, 2.0, 2.0), Vector3.ZERO))
 	parent.add_child(_make_scene_prop(CHIMNEY_SMALL_SCENE, Vector3(4.8, 0.0, 0.5), Vector3(1.8, 1.8, 1.8), Vector3.ZERO))
 
-	# Corner fillers (moved away from buttons)
 	parent.add_child(_make_box_body(Vector3(1.8, 2.4, 1.8), Vector3(-4.8, 1.2, -4.8), dark_metal))
 	parent.add_child(_make_box_body(Vector3(1.8, 2.4, 1.8), Vector3(4.8, 1.2, -4.8), dark_metal))
 
 
 func _build_equipment(parent: Node3D) -> void:
-	# Panel 1 (Front Wall)
 	var mat1 := _make_panel_material(Color(0.95, 0.68, 0.08))
 	block_materials.append(mat1)
 	parent.add_child(_make_interactable_panel(
@@ -104,7 +102,6 @@ func _build_equipment(parent: Node3D) -> void:
 		"ЩИТ 1"
 	))
 
-	# Panel 2 (Left Wall)
 	var mat2 := _make_panel_material(Color(0.95, 0.68, 0.08))
 	block_materials.append(mat2)
 	var panel2 = _make_interactable_panel(
@@ -121,7 +118,6 @@ func _build_equipment(parent: Node3D) -> void:
 	label2.position = Vector3(0.16, 0.0, 0.0)
 	label2.rotation_degrees = Vector3(0, 90, 0)
 
-	# Panel 3 (Right Wall)
 	var mat3 := _make_panel_material(Color(0.95, 0.68, 0.08))
 	block_materials.append(mat3)
 	var panel3 = _make_interactable_panel(
@@ -231,9 +227,9 @@ func _disable_block(index: int, interactable: Interactable) -> void:
 	var mat = block_materials[index]
 	mat.albedo_color = Color(0.18, 0.72, 0.28)
 	mat.emission = Color(0.18, 0.72, 0.28)
-	
+
 	blocks_disabled += 1
-	
+
 	if blocks_disabled < 3:
 		hud.show_feedback("Отключено щитков: %d из 3." % blocks_disabled, "info")
 	else:
@@ -243,7 +239,7 @@ func _disable_block(index: int, interactable: Interactable) -> void:
 func _all_blocks_disabled() -> void:
 	for lamp in main_lights:
 		lamp.visible = false
-	
+
 	exit_panel_material.albedo_color = Color(0.18, 0.72, 0.28)
 	exit_panel_material.emission = Color(0.18, 0.72, 0.28)
 	exit_light.light_color = Color(0.2, 0.92, 0.36)
@@ -257,6 +253,7 @@ func _all_blocks_disabled() -> void:
 func _try_exit() -> void:
 	if blocks_disabled < 3:
 		GameSession.record_action("power_shutdown/exit_blocked")
+		GameSession.add_error()
 		hud.show_feedback("Сначала отключите все 3 электрощитка.", "warning")
 		return
 

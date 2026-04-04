@@ -4,3 +4,23 @@ package xyz.fire_step.v1.stats;
 
 option go_package = "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/stats;stats";
 option csharp_namespace = "Aesterial.FireStep.Api.V1.Stats";
+
+import "xyz/fire-step/v1/seances/domain.proto";
+import "google/protobuf/timestamp.proto";
+
+message Stats {
+  int32 seance_count = 1;
+  int32 errors_count = 2;
+  int32 avg_seconds = 3;
+  repeated xyz.fire_step.v1.seances.Seance latest = 4;
+}
+
+message GraphPoint {
+  google.protobuf.Timestamp at = 1;
+  int32 count = 2;
+}
+
+message GraphStatsResponse {
+  repeated GraphPoint errors = 1;
+  repeated GraphPoint users_activity = 2;
+}

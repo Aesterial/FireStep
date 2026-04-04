@@ -1,4 +1,4 @@
-extends Node
+﻿extends Node
 
 signal input_mode_changed(mode: String)
 
@@ -129,7 +129,7 @@ func reset_session(full_reset: bool = false) -> void:
 
 func add_error() -> void:
 	total_errors += 1
-	_persist_pending_seance(false)
+	record_action("scenario/error_detected")
 
 
 func get_elapsed_time_string() -> String:
@@ -156,7 +156,6 @@ func set_final_result(success: bool, title: String, body: String, highlights: Ar
 
 
 func get_prompt_string(text: String) -> String:
-	# Strip any existing hardcoded bracket prefixes from old code.
 	var clean_text = text
 	if clean_text.begins_with("[E] "):
 		clean_text = clean_text.substr(4)
@@ -206,7 +205,7 @@ func load_auth_state() -> void:
 		return
 
 	session_token = str(parsed.get("sessionToken", ""))
-	session_verified = false
+	session_verified = not session_token.is_empty()
 	var profile = parsed.get("user", {})
 	user_profile = profile.duplicate(true) if typeof(profile) == TYPE_DICTIONARY else {}
 
@@ -232,7 +231,7 @@ func record_action(action_name: String) -> void:
 		"atUnixMs": _now_unix_msec(),
 	})
 	next_action_id += 1
-	_persist_pending_seance(false)
+	_persist_pending_seance(end_time_unix_msec > 0)
 
 
 func flush_pending_seance() -> void:

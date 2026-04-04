@@ -1,4 +1,4 @@
-extends Node3D
+﻿extends Node3D
 
 const Interactable = preload("res://scripts/interactable.gd")
 const FLOOR_TEXTURE: Texture2D = preload("res://assets/textures/prototype/dark_04.png")
@@ -7,9 +7,9 @@ const CEILING_TEXTURE: Texture2D = preload("res://assets/textures/prototype/dark
 const DETAIL_TANK_SCENE: PackedScene = preload("res://assets/models/detail-tank.glb")
 const CHIMNEY_SMALL_SCENE: PackedScene = preload("res://assets/models/chimney-small.glb")
 
-@onready var world_environment: WorldEnvironment = $WorldEnvironment
-@onready var player: CharacterBody3D = $Player
-@onready var hud: CanvasLayer = $HUD
+@onready var world_environment: WorldEnvironment = 
+@onready var player: CharacterBody3D = 
+@onready var hud: CanvasLayer = 
 
 var generator_disabled: bool = false
 var generator_body_material: StandardMaterial3D
@@ -81,7 +81,7 @@ func _build_world() -> void:
 	_build_generator(root)
 	_build_exit(root)
 	_build_lights(root)
-	
+
 	root.add_child(_make_scene_prop(DETAIL_TANK_SCENE, Vector3(-4.2, 0.0, 3.4), Vector3(1.6, 1.6, 1.6), Vector3(0.0, 45.0, 0.0)))
 	root.add_child(_make_scene_prop(CHIMNEY_SMALL_SCENE, Vector3(4.2, 0.0, -3.2), Vector3(1.4, 1.4, 1.4), Vector3.ZERO))
 
@@ -211,6 +211,7 @@ func _disable_generator() -> void:
 func _try_exit() -> void:
 	if not generator_disabled:
 		GameSession.record_action("secondary_generator/exit_blocked")
+		GameSession.add_error()
 		hud.show_feedback("Сначала отключите резервный генератор. Иначе соседний модуль остаётся под риском.", "warning")
 		return
 

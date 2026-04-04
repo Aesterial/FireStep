@@ -11,5 +11,5 @@ import "xyz/fire-step/v1/types.proto";
 
 service UserService {
   rpc Info(google.protobuf.Empty) returns (User);
-  rpc List(xyz.fire_step.v1.RequestWithTextValue) returns (Users);
+  rpc List(google.protobuf.Empty) returns (Users);
 }

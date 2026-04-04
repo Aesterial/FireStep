@@ -4,3 +4,11 @@ package xyz.fire_step.v1.stats;
 
 option go_package = "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/stats;stats";
 option csharp_namespace = "Aesterial.FireStep.Api.V1.Stats";
+
+import "xyz/fire-step/v1/stats/domain.proto";
+import "google/protobuf/empty.proto";
+
+service StatsService {
+  rpc TitleStats(google.protobuf.Empty) returns (Stats);
+  rpc GraphStats(google.protobuf.Empty) returns (GraphStatsResponse);
+}

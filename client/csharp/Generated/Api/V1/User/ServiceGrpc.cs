@@ -50,8 +50,6 @@ namespace Aesterial.FireStep.Api.V1.User {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Aesterial.FireStep.Api.V1.User.User> __Marshaller_xyz_fire_step_v1_user_User = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Aesterial.FireStep.Api.V1.User.User.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Aesterial.FireStep.Api.V1.RequestWithTextValue> __Marshaller_xyz_fire_step_v1_RequestWithTextValue = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Aesterial.FireStep.Api.V1.RequestWithTextValue.Parser));
-    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Aesterial.FireStep.Api.V1.User.Users> __Marshaller_xyz_fire_step_v1_user_Users = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Aesterial.FireStep.Api.V1.User.Users.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
@@ -63,11 +61,11 @@ namespace Aesterial.FireStep.Api.V1.User {
         __Marshaller_xyz_fire_step_v1_user_User);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Aesterial.FireStep.Api.V1.RequestWithTextValue, global::Aesterial.FireStep.Api.V1.User.Users> __Method_List = new grpc::Method<global::Aesterial.FireStep.Api.V1.RequestWithTextValue, global::Aesterial.FireStep.Api.V1.User.Users>(
+    static readonly grpc::Method<global::Google.Protobuf.WellKnownTypes.Empty, global::Aesterial.FireStep.Api.V1.User.Users> __Method_List = new grpc::Method<global::Google.Protobuf.WellKnownTypes.Empty, global::Aesterial.FireStep.Api.V1.User.Users>(
         grpc::MethodType.Unary,
         __ServiceName,
         "List",
-        __Marshaller_xyz_fire_step_v1_RequestWithTextValue,
+        __Marshaller_google_protobuf_Empty,
         __Marshaller_xyz_fire_step_v1_user_Users);
 
     /// <summary>Service descriptor</summary>
@@ -87,7 +85,7 @@ namespace Aesterial.FireStep.Api.V1.User {
       }
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task<global::Aesterial.FireStep.Api.V1.User.Users> List(global::Aesterial.FireStep.Api.V1.RequestWithTextValue request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::Aesterial.FireStep.Api.V1.User.Users> List(global::Google.Protobuf.WellKnownTypes.Empty request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -142,22 +140,22 @@ namespace Aesterial.FireStep.Api.V1.User {
         return CallInvoker.AsyncUnaryCall(__Method_Info, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Aesterial.FireStep.Api.V1.User.Users List(global::Aesterial.FireStep.Api.V1.RequestWithTextValue request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Aesterial.FireStep.Api.V1.User.Users List(global::Google.Protobuf.WellKnownTypes.Empty request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return List(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Aesterial.FireStep.Api.V1.User.Users List(global::Aesterial.FireStep.Api.V1.RequestWithTextValue request, grpc::CallOptions options)
+      public virtual global::Aesterial.FireStep.Api.V1.User.Users List(global::Google.Protobuf.WellKnownTypes.Empty request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_List, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Aesterial.FireStep.Api.V1.User.Users> ListAsync(global::Aesterial.FireStep.Api.V1.RequestWithTextValue request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Aesterial.FireStep.Api.V1.User.Users> ListAsync(global::Google.Protobuf.WellKnownTypes.Empty request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return ListAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Aesterial.FireStep.Api.V1.User.Users> ListAsync(global::Aesterial.FireStep.Api.V1.RequestWithTextValue request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Aesterial.FireStep.Api.V1.User.Users> ListAsync(global::Google.Protobuf.WellKnownTypes.Empty request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_List, null, options, request);
       }
@@ -187,7 +185,7 @@ namespace Aesterial.FireStep.Api.V1.User {
     public static void BindService(grpc::ServiceBinderBase serviceBinder, UserServiceBase serviceImpl)
     {
       serviceBinder.AddMethod(__Method_Info, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Google.Protobuf.WellKnownTypes.Empty, global::Aesterial.FireStep.Api.V1.User.User>(serviceImpl.Info));
-      serviceBinder.AddMethod(__Method_List, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Aesterial.FireStep.Api.V1.RequestWithTextValue, global::Aesterial.FireStep.Api.V1.User.Users>(serviceImpl.List));
+      serviceBinder.AddMethod(__Method_List, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Google.Protobuf.WellKnownTypes.Empty, global::Aesterial.FireStep.Api.V1.User.Users>(serviceImpl.List));
     }
 
   }

@@ -25,12 +25,17 @@ namespace Aesterial.FireStep.Api.V1.Stats {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CiR4eXovZmlyZS1zdGVwL3YxL3N0YXRzL3NlcnZpY2UucHJvdG8SFnh5ei5m",
-            "aXJlX3N0ZXAudjEuc3RhdHNCdFpQZ2l0aHViLmNvbS9hZXN0ZXJpYWwvZmly",
-            "ZS1zdGVwL2JhY2tlbmQvaW50ZXJuYWwvYXBpL3h5ei9maXJlLXN0ZXAvdjEv",
-            "c3RhdHM7c3RhdHOqAh9BZXN0ZXJpYWwuRmlyZVN0ZXAuQXBpLlYxLlN0YXRz",
-            "YgZwcm90bzM="));
+            "aXJlX3N0ZXAudjEuc3RhdHMaI3h5ei9maXJlLXN0ZXAvdjEvc3RhdHMvZG9t",
+            "YWluLnByb3RvGhtnb29nbGUvcHJvdG9idWYvZW1wdHkucHJvdG8ypQEKDFN0",
+            "YXRzU2VydmljZRJDCgpUaXRsZVN0YXRzEhYuZ29vZ2xlLnByb3RvYnVmLkVt",
+            "cHR5Gh0ueHl6LmZpcmVfc3RlcC52MS5zdGF0cy5TdGF0cxJQCgpHcmFwaFN0",
+            "YXRzEhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5GioueHl6LmZpcmVfc3RlcC52",
+            "MS5zdGF0cy5HcmFwaFN0YXRzUmVzcG9uc2VCdFpQZ2l0aHViLmNvbS9hZXN0",
+            "ZXJpYWwvZmlyZS1zdGVwL2JhY2tlbmQvaW50ZXJuYWwvYXBpL3h5ei9maXJl",
+            "LXN0ZXAvdjEvc3RhdHM7c3RhdHOqAh9BZXN0ZXJpYWwuRmlyZVN0ZXAuQXBp",
+            "LlYxLlN0YXRzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
+          new pbr::FileDescriptor[] { global::Aesterial.FireStep.Api.V1.Stats.DomainReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.EmptyReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, null));
     }
     #endregion

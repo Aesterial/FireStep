@@ -1,4 +1,4 @@
-extends Node
+﻿extends Node
 class_name ScenarioState
 
 signal objective_changed(text: String)
@@ -103,6 +103,7 @@ func submit_decision(choice: String) -> void:
 			decision_requested.emit(false, "", "")
 			visuals_changed.emit("alarm_raised")
 		"evacuate":
+			GameSession.add_error()
 			feedback_requested.emit(
 				"Эвакуация важна, но в рамках этого тренажёра нужно сначала зафиксировать вызов помощи из безопасной точки.",
 				"warning"
@@ -135,10 +136,13 @@ func _handle_emergency_stop() -> void:
 func _handle_exit() -> void:
 	match phase:
 		Phase.WAIT_STOP:
+			GameSession.add_error()
 			feedback_requested.emit("Слишком рано. Сначала выполните аварийную остановку.", "warning")
 		Phase.MOVE_TO_SAFE_ZONE:
+			GameSession.add_error()
 			feedback_requested.emit("Сначала нужно отойти в безопасную зону.", "warning")
 		Phase.DECISION:
+			GameSession.add_error()
 			feedback_requested.emit("Перед выходом сначала зафиксируйте вызов помощи.", "warning")
 		Phase.MOVE_TO_EXIT:
 			_succeed()
