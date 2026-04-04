@@ -12,8 +12,10 @@ import (
 	loginpb "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/login"
 	seancespb "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/seances"
 	sessionpb "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/session"
+	statspb "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/stats"
 	userpb "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/user"
 	seanceservice "github.com/aesterial/fire-step/backend/internal/app/seance"
+	statsservice "github.com/aesterial/fire-step/backend/internal/app/stats"
 	"github.com/aesterial/fire-step/backend/internal/infra/handlers/interceptors"
 
 	configservice "github.com/aesterial/fire-step/backend/internal/app/config"
@@ -42,17 +44,20 @@ func main() {
 	userRepository := repositories.NewUserRepository(conn.Querier())
 	sessionRepository := repositories.NewSessionRepository(conn.Querier())
 	seanceRepository := repositories.NewSeanceRepository(conn.Querier())
+	statsRepository := repositories.NewStatsRepository(conn.Querier())
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	userService := userservice.NewUserService(userRepository)
 	sessionService := sessionservice.NewSessionService(sessionRepository)
 	seanceService := seanceservice.NewSeanceService(seanceRepository)
+	statsService := statsservice.NewStatsService(statsRepository, seanceService, userService)
 	loginService := loginservice.NewLoginService(userService, sessionService)
 	auth := handlers.NewAuthentificator(sessionService, userService)
 	loginHandler := handlers.NewLoginHandler(loginService, auth)
 	userHandler := handlers.NewUserHandler(userService, auth)
 	sessionHandler := handlers.NewSessionsHandler(sessionService, auth)
 	seanceHandler := handlers.NewSeanceHandler(seanceService, auth)
+	statsHandler := handlers.NewStatsHandler(statsService, auth)
 
 	server := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
@@ -68,6 +73,7 @@ func main() {
 	userpb.RegisterUserServiceServer(server, userHandler)
 	sessionpb.RegisterSessionsServiceServer(server, sessionHandler)
 	seancespb.RegisterSeancesServiceServer(server, seanceHandler)
+	statspb.RegisterStatsServiceServer(server, statsHandler)
 
 	addr := "0.0.0.0:" + cfg.Port
 

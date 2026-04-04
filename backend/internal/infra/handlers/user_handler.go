@@ -3,7 +3,6 @@ package handlers
 import (
 	"context"
 
-	firestepv1 "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1"
 	userpb "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/user"
 	userservice "github.com/aesterial/fire-step/backend/internal/app/user"
 	apperrors "github.com/aesterial/fire-step/backend/internal/shared/errors"
@@ -34,7 +33,7 @@ func (u *UserHandler) Info(ctx context.Context, _ *emptypb.Empty) (*userpb.User,
 	return usr.Protobuf(), nil
 }
 
-func (u *UserHandler) List(ctx context.Context, req *firestepv1.RequestWithTextValue) (*userpb.Users, error) {
+func (u *UserHandler) List(ctx context.Context, _ *emptypb.Empty) (*userpb.Users, error) {
 	meta, err := u.auth.User(ctx, true)
 	if err != nil {
 		return nil, apperrors.Wrap(err)
@@ -45,12 +44,7 @@ func (u *UserHandler) List(ctx context.Context, req *firestepv1.RequestWithTextV
 		return nil, apperrors.Wrap(err)
 	}
 
-	org := currentUser.Organization
-	if req != nil && req.GetValue() != "" {
-		org = req.GetValue()
-	}
-
-	users, err := u.usr.List(ctx, org)
+	users, err := u.usr.List(ctx, currentUser.Organization)
 	if err != nil {
 		return nil, apperrors.Wrap(err)
 	}

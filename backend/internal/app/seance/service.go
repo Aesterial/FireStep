@@ -20,6 +20,10 @@ func (s *Service) GetList(ctx context.Context, id userdomain.UUID) (seancesdomai
 	return s.seances.GetList(ctx, id)
 }
 
+func (s *Service) GetLatestByOrg(ctx context.Context, org string) (seancesdomain.Seances, error) {
+	return s.seances.GetLatestByOrg(ctx, org)
+}
+
 func (s *Service) Create(ctx context.Context, owner userdomain.UUID, errors int32, actions seancesdomain.Actions, at time.Time, done time.Time) (*seancesdomain.Seance, error) {
 	return s.seances.Create(ctx, owner, errors, actions, at, done)
 }

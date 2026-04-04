@@ -9,6 +9,7 @@ package stats
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	unsafe "unsafe"
 )
@@ -24,12 +25,25 @@ var File_xyz_fire_step_v1_stats_service_proto protoreflect.FileDescriptor
 
 const file_xyz_fire_step_v1_stats_service_proto_rawDesc = "" +
 	"\n" +
-	"$xyz/fire-step/v1/stats/service.proto\x12\x16xyz.fire_step.v1.statsBtZPgithub.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/stats;stats\xaa\x02\x1fAesterial.FireStep.Api.V1.Statsb\x06proto3"
+	"$xyz/fire-step/v1/stats/service.proto\x12\x16xyz.fire_step.v1.stats\x1a#xyz/fire-step/v1/stats/domain.proto\x1a\x1bgoogle/protobuf/empty.proto2\xa5\x01\n" +
+	"\fStatsService\x12C\n" +
+	"\n" +
+	"TitleStats\x12\x16.google.protobuf.Empty\x1a\x1d.xyz.fire_step.v1.stats.Stats\x12P\n" +
+	"\n" +
+	"GraphStats\x12\x16.google.protobuf.Empty\x1a*.xyz.fire_step.v1.stats.GraphStatsResponseBtZPgithub.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/stats;stats\xaa\x02\x1fAesterial.FireStep.Api.V1.Statsb\x06proto3"
 
-var file_xyz_fire_step_v1_stats_service_proto_goTypes = []any{}
+var file_xyz_fire_step_v1_stats_service_proto_goTypes = []any{
+	(*emptypb.Empty)(nil),      // 0: google.protobuf.Empty
+	(*Stats)(nil),              // 1: xyz.fire_step.v1.stats.Stats
+	(*GraphStatsResponse)(nil), // 2: xyz.fire_step.v1.stats.GraphStatsResponse
+}
 var file_xyz_fire_step_v1_stats_service_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
+	0, // 0: xyz.fire_step.v1.stats.StatsService.TitleStats:input_type -> google.protobuf.Empty
+	0, // 1: xyz.fire_step.v1.stats.StatsService.GraphStats:input_type -> google.protobuf.Empty
+	1, // 2: xyz.fire_step.v1.stats.StatsService.TitleStats:output_type -> xyz.fire_step.v1.stats.Stats
+	2, // 3: xyz.fire_step.v1.stats.StatsService.GraphStats:output_type -> xyz.fire_step.v1.stats.GraphStatsResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -40,6 +54,7 @@ func file_xyz_fire_step_v1_stats_service_proto_init() {
 	if File_xyz_fire_step_v1_stats_service_proto != nil {
 		return
 	}
+	file_xyz_fire_step_v1_stats_domain_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
@@ -48,7 +63,7 @@ func file_xyz_fire_step_v1_stats_service_proto_init() {
 			NumEnums:      0,
 			NumMessages:   0,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_xyz_fire_step_v1_stats_service_proto_goTypes,
 		DependencyIndexes: file_xyz_fire_step_v1_stats_service_proto_depIdxs,

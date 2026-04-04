@@ -1,4 +1,4 @@
-package repositories
+﻿package repositories
 
 import (
 	"context"
@@ -30,16 +30,28 @@ func (s *SeanceRepository) parseSeance(seance sqlc.Seance) *seancesdomain.Seance
 	}
 	return &seancesdomain.Seance{
 		ID:      userdomain.ParseUUIDBytes(seance.ID.Bytes),
-		Owner:   userdomain.ParseUUIDBytes(seance.ID.Bytes),
+		Owner:   userdomain.ParseUUIDBytes(seance.Owner.Bytes),
 		Errors:  seance.Errors,
 		Actions: actions,
 		At:      seance.At.Time,
-		Done:    seance.At.Time,
+		Done:    seance.Done.Time,
 	}
 }
 
 func (s *SeanceRepository) GetList(ctx context.Context, owner userdomain.UUID) (seancesdomain.Seances, error) {
 	list, err := s.conn.GetUserSeances(ctx, owner.PGType())
+	if err != nil {
+		return nil, err
+	}
+	var resp = make(seancesdomain.Seances, len(list))
+	for i, e := range list {
+		resp[i] = s.parseSeance(e)
+	}
+	return resp, nil
+}
+
+func (s *SeanceRepository) GetLatestByOrg(ctx context.Context, org string) (seancesdomain.Seances, error) {
+	list, err := s.conn.GetLatestSeancesByOrg(ctx, org)
 	if err != nil {
 		return nil, err
 	}

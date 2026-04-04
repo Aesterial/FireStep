@@ -12,7 +12,9 @@ import (
 )
 
 const createSession = `-- name: CreateSession :one
-insert into sessions (owner, device) values ($1, $2) returning id, owner, device, createdat, expiresat, lastSeenAt
+insert into sessions (owner, device)
+values ($1, $2)
+returning id, owner, device, createdat, expiresat, lastSeenAt
 `
 
 type CreateSessionParams struct {
@@ -35,7 +37,9 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 }
 
 const createUser = `-- name: CreateUser :one
-insert into users (username, email, password, org, initials) values ($1, $2, $3, $4, $5) returning id, username, initials, email, org, admin_access, joinedat
+insert into users (username, email, password, org, initials)
+values ($1, $2, $3, $4, $5)
+returning id, username, initials, email, org, admin_access, joinedat
 `
 
 type CreateUserParams struct {
@@ -78,7 +82,9 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 }
 
 const createUserSeance = `-- name: CreateUserSeance :one
-insert into seance (owner, actions, at, done, errors) values ($1, $2, $3, $4, $5) returning id, owner, errors, actions, at, done
+insert into seance (owner, actions, at, done, errors)
+values ($1, $2, $3, $4, $5)
+returning id, owner, errors, actions, at, done
 `
 
 type CreateUserSeanceParams struct {
@@ -109,8 +115,115 @@ func (q *Queries) CreateUserSeance(ctx context.Context, arg CreateUserSeancePara
 	return i, err
 }
 
+const getActivityByDayByOrg = `-- name: GetActivityByDayByOrg :many
+SELECT date_trunc('day', at)::timestamptz AS day, COUNT(s.id)::int AS count
+FROM seance s
+         JOIN users u ON u.id = s.owner
+WHERE u.org = $1 AND at > NOW() - INTERVAL '7 days'
+GROUP BY day
+ORDER BY day
+`
+
+type GetActivityByDayByOrgRow struct {
+	Day   pgtype.Timestamptz `json:"day"`
+	Count int32              `json:"count"`
+}
+
+func (q *Queries) GetActivityByDayByOrg(ctx context.Context, org string) ([]GetActivityByDayByOrgRow, error) {
+	rows, err := q.db.Query(ctx, getActivityByDayByOrg, org)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetActivityByDayByOrgRow{}
+	for rows.Next() {
+		var i GetActivityByDayByOrgRow
+		if err := rows.Scan(&i.Day, &i.Count); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getErrorsPerHourByOrg = `-- name: GetErrorsPerHourByOrg :many
+SELECT date_trunc('hour', at)::timestamptz AS hour, SUM(errors)::int AS count
+FROM seance s
+         JOIN users u ON u.id = s.owner
+WHERE u.org = $1 AND at > NOW() - INTERVAL '24 hours'
+GROUP BY hour
+ORDER BY hour
+`
+
+type GetErrorsPerHourByOrgRow struct {
+	Hour  pgtype.Timestamptz `json:"hour"`
+	Count int32              `json:"count"`
+}
+
+func (q *Queries) GetErrorsPerHourByOrg(ctx context.Context, org string) ([]GetErrorsPerHourByOrgRow, error) {
+	rows, err := q.db.Query(ctx, getErrorsPerHourByOrg, org)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetErrorsPerHourByOrgRow{}
+	for rows.Next() {
+		var i GetErrorsPerHourByOrgRow
+		if err := rows.Scan(&i.Hour, &i.Count); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getLatestSeancesByOrg = `-- name: GetLatestSeancesByOrg :many
+SELECT s.id, s.owner, s.errors, s.actions, s.at, s.done
+FROM seance s
+         JOIN users u ON u.id = s.owner
+WHERE u.org = $1
+ORDER BY s.at DESC
+LIMIT 7
+`
+
+func (q *Queries) GetLatestSeancesByOrg(ctx context.Context, org string) ([]Seance, error) {
+	rows, err := q.db.Query(ctx, getLatestSeancesByOrg, org)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Seance{}
+	for rows.Next() {
+		var i Seance
+		if err := rows.Scan(
+			&i.ID,
+			&i.Owner,
+			&i.Errors,
+			&i.Actions,
+			&i.At,
+			&i.Done,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getPasswordByUsername = `-- name: GetPasswordByUsername :one
-select password from users where username = $1 limit 1
+select password
+from users
+where username = $1
+limit 1
 `
 
 func (q *Queries) GetPasswordByUsername(ctx context.Context, username string) (string, error) {
@@ -121,11 +234,9 @@ func (q *Queries) GetPasswordByUsername(ctx context.Context, username string) (s
 }
 
 const getSeanceStatsByOrg = `-- name: GetSeanceStatsByOrg :one
-SELECT
-    COUNT(s.id) AS total_seances,
-    COALESCE(SUM(s.errors), 0) AS total_errors,
-    AVG(s.done - s.at) AS avg_execution_time,
-    AVG(EXTRACT(EPOCH FROM (s.done - s.at))) AS avg_execution_time_seconds
+SELECT COUNT(s.id)                              AS total_seances,
+       COALESCE(SUM(s.errors), 0)               AS total_errors,
+       AVG(EXTRACT(EPOCH FROM (s.done - s.at))) AS avg_execution_time_seconds
 FROM seance s
          JOIN users u ON u.id = s.owner
 WHERE u.org = $1
@@ -134,24 +245,20 @@ WHERE u.org = $1
 type GetSeanceStatsByOrgRow struct {
 	TotalSeances            int64       `json:"total_seances"`
 	TotalErrors             interface{} `json:"total_errors"`
-	AvgExecutionTime        float64     `json:"avg_execution_time"`
 	AvgExecutionTimeSeconds float64     `json:"avg_execution_time_seconds"`
 }
 
 func (q *Queries) GetSeanceStatsByOrg(ctx context.Context, org string) (GetSeanceStatsByOrgRow, error) {
 	row := q.db.QueryRow(ctx, getSeanceStatsByOrg, org)
 	var i GetSeanceStatsByOrgRow
-	err := row.Scan(
-		&i.TotalSeances,
-		&i.TotalErrors,
-		&i.AvgExecutionTime,
-		&i.AvgExecutionTimeSeconds,
-	)
+	err := row.Scan(&i.TotalSeances, &i.TotalErrors, &i.AvgExecutionTimeSeconds)
 	return i, err
 }
 
 const getSession = `-- name: GetSession :one
-select id, owner, device, createdat, expiresat, lastseenat from sessions where id = $1
+select id, owner, device, createdat, expiresat, lastseenat
+from sessions
+where id = $1
 `
 
 func (q *Queries) GetSession(ctx context.Context, id pgtype.UUID) (Session, error) {
@@ -169,7 +276,9 @@ func (q *Queries) GetSession(ctx context.Context, id pgtype.UUID) (Session, erro
 }
 
 const getUser = `-- name: GetUser :one
-select username, email, org, initials, admin_access, joinedat from users where id = $1
+select username, email, org, initials, admin_access, joinedat
+from users
+where id = $1
 `
 
 type GetUserRow struct {
@@ -196,7 +305,10 @@ func (q *Queries) GetUser(ctx context.Context, id pgtype.UUID) (GetUserRow, erro
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
-select id, username, email, org, initials, admin_access, joinedat from users where username = $1 limit 1
+select id, username, email, org, initials, admin_access, joinedat
+from users
+where username = $1
+limit 1
 `
 
 type GetUserByUsernameRow struct {
@@ -225,7 +337,9 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username string) (GetUs
 }
 
 const getUserSeances = `-- name: GetUserSeances :many
-select id, owner, errors, actions, at, done from seance where owner = $1
+select id, owner, errors, actions, at, done
+from seance
+where owner = $1
 `
 
 func (q *Queries) GetUserSeances(ctx context.Context, owner pgtype.UUID) ([]Seance, error) {
@@ -256,7 +370,9 @@ func (q *Queries) GetUserSeances(ctx context.Context, owner pgtype.UUID) ([]Sean
 }
 
 const getUsersByOrg = `-- name: GetUsersByOrg :many
-select id, email, username, initials, admin_access, joinedat from users where org = $1
+select id, email, username, initials, admin_access, joinedat
+from users
+where org = $1
 `
 
 type GetUsersByOrgRow struct {
@@ -296,7 +412,9 @@ func (q *Queries) GetUsersByOrg(ctx context.Context, org string) ([]GetUsersByOr
 }
 
 const getUsersCountByOrg = `-- name: GetUsersCountByOrg :one
-select count(*) from users where org = $1
+select count(*)
+from users
+where org = $1
 `
 
 func (q *Queries) GetUsersCountByOrg(ctx context.Context, org string) (int64, error) {
@@ -318,7 +436,10 @@ func (q *Queries) IsSessionExists(ctx context.Context, id pgtype.UUID) (bool, er
 }
 
 const isUserAdmin = `-- name: IsUserAdmin :one
-select admin_access from users where id = $1 limit 1
+select admin_access
+from users
+where id = $1
+limit 1
 `
 
 func (q *Queries) IsUserAdmin(ctx context.Context, id pgtype.UUID) (bool, error) {
@@ -356,7 +477,9 @@ func (q *Queries) IsUsernameOrEmailExists(ctx context.Context, arg IsUsernameOrE
 }
 
 const revokeSession = `-- name: RevokeSession :exec
-update sessions set expiresat = now() where id = $1
+update sessions
+set expiresat = now()
+where id = $1
 `
 
 func (q *Queries) RevokeSession(ctx context.Context, id pgtype.UUID) error {
@@ -365,7 +488,9 @@ func (q *Queries) RevokeSession(ctx context.Context, id pgtype.UUID) error {
 }
 
 const sessionList = `-- name: SessionList :many
-select id, owner, device, createdat, expiresat, lastSeenAt from sessions where owner = $1
+select id, owner, device, createdat, expiresat, lastSeenAt
+from sessions
+where owner = $1
 `
 
 func (q *Queries) SessionList(ctx context.Context, owner pgtype.UUID) ([]Session, error) {
@@ -396,7 +521,10 @@ func (q *Queries) SessionList(ctx context.Context, owner pgtype.UUID) ([]Session
 }
 
 const sessionOwner = `-- name: SessionOwner :one
-select owner from sessions where id = $1 limit 1
+select owner
+from sessions
+where id = $1
+limit 1
 `
 
 func (q *Queries) SessionOwner(ctx context.Context, id pgtype.UUID) (pgtype.UUID, error) {
@@ -407,7 +535,9 @@ func (q *Queries) SessionOwner(ctx context.Context, id pgtype.UUID) (pgtype.UUID
 }
 
 const setSessionLastSeen = `-- name: SetSessionLastSeen :exec
-update sessions set lastseenat = $1 where id = $2
+update sessions
+set lastseenat = $1
+where id = $2
 `
 
 type SetSessionLastSeenParams struct {

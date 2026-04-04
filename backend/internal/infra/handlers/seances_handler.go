@@ -27,6 +27,7 @@ func NewSeanceHandler(sean *seanceservice.Service, auth *Authentificator) *Seanc
 func (s *SeanceHandler) List(ctx context.Context, _ *emptypb.Empty) (*seancespb.Seances, error) {
 	auth, err := s.auth.User(ctx)
 	if err != nil {
+		loggingservice.Warning("", "failed to authorize user: "+err.Error())
 		return nil, apperrors.Wrap(err)
 	}
 	list, err := s.sean.GetList(ctx, *auth.UserID)

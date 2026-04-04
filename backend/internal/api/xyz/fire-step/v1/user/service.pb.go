@@ -7,7 +7,7 @@
 package user
 
 import (
-	v1 "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1"
+	_ "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -26,22 +26,21 @@ var File_xyz_fire_step_v1_user_service_proto protoreflect.FileDescriptor
 
 const file_xyz_fire_step_v1_user_service_proto_rawDesc = "" +
 	"\n" +
-	"#xyz/fire-step/v1/user/service.proto\x12\x15xyz.fire_step.v1.user\x1a\x1bgoogle/protobuf/empty.proto\x1a\"xyz/fire-step/v1/user/domain.proto\x1a\x1cxyz/fire-step/v1/types.proto2\x98\x01\n" +
+	"#xyz/fire-step/v1/user/service.proto\x12\x15xyz.fire_step.v1.user\x1a\x1bgoogle/protobuf/empty.proto\x1a\"xyz/fire-step/v1/user/domain.proto\x1a\x1cxyz/fire-step/v1/types.proto2\x88\x01\n" +
 	"\vUserService\x12;\n" +
-	"\x04Info\x12\x16.google.protobuf.Empty\x1a\x1b.xyz.fire_step.v1.user.User\x12L\n" +
-	"\x04List\x12&.xyz.fire_step.v1.RequestWithTextValue\x1a\x1c.xyz.fire_step.v1.user.UsersBqZNgithub.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/user;user\xaa\x02\x1eAesterial.FireStep.Api.V1.Userb\x06proto3"
+	"\x04Info\x12\x16.google.protobuf.Empty\x1a\x1b.xyz.fire_step.v1.user.User\x12<\n" +
+	"\x04List\x12\x16.google.protobuf.Empty\x1a\x1c.xyz.fire_step.v1.user.UsersBqZNgithub.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/user;user\xaa\x02\x1eAesterial.FireStep.Api.V1.Userb\x06proto3"
 
 var file_xyz_fire_step_v1_user_service_proto_goTypes = []any{
-	(*emptypb.Empty)(nil),           // 0: google.protobuf.Empty
-	(*v1.RequestWithTextValue)(nil), // 1: xyz.fire_step.v1.RequestWithTextValue
-	(*User)(nil),                    // 2: xyz.fire_step.v1.user.User
-	(*Users)(nil),                   // 3: xyz.fire_step.v1.user.Users
+	(*emptypb.Empty)(nil), // 0: google.protobuf.Empty
+	(*User)(nil),          // 1: xyz.fire_step.v1.user.User
+	(*Users)(nil),         // 2: xyz.fire_step.v1.user.Users
 }
 var file_xyz_fire_step_v1_user_service_proto_depIdxs = []int32{
 	0, // 0: xyz.fire_step.v1.user.UserService.Info:input_type -> google.protobuf.Empty
-	1, // 1: xyz.fire_step.v1.user.UserService.List:input_type -> xyz.fire_step.v1.RequestWithTextValue
-	2, // 2: xyz.fire_step.v1.user.UserService.Info:output_type -> xyz.fire_step.v1.user.User
-	3, // 3: xyz.fire_step.v1.user.UserService.List:output_type -> xyz.fire_step.v1.user.Users
+	0, // 1: xyz.fire_step.v1.user.UserService.List:input_type -> google.protobuf.Empty
+	1, // 2: xyz.fire_step.v1.user.UserService.Info:output_type -> xyz.fire_step.v1.user.User
+	2, // 3: xyz.fire_step.v1.user.UserService.List:output_type -> xyz.fire_step.v1.user.Users
 	2, // [2:4] is the sub-list for method output_type
 	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

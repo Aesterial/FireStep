@@ -8,7 +8,6 @@ package user
 
 import (
 	context "context"
-	v1 "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -30,7 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserServiceClient interface {
 	Info(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*User, error)
-	List(ctx context.Context, in *v1.RequestWithTextValue, opts ...grpc.CallOption) (*Users, error)
+	List(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Users, error)
 }
 
 type userServiceClient struct {
@@ -51,7 +50,7 @@ func (c *userServiceClient) Info(ctx context.Context, in *emptypb.Empty, opts ..
 	return out, nil
 }
 
-func (c *userServiceClient) List(ctx context.Context, in *v1.RequestWithTextValue, opts ...grpc.CallOption) (*Users, error) {
+func (c *userServiceClient) List(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Users, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Users)
 	err := c.cc.Invoke(ctx, UserService_List_FullMethodName, in, out, cOpts...)
@@ -66,7 +65,7 @@ func (c *userServiceClient) List(ctx context.Context, in *v1.RequestWithTextValu
 // for forward compatibility.
 type UserServiceServer interface {
 	Info(context.Context, *emptypb.Empty) (*User, error)
-	List(context.Context, *v1.RequestWithTextValue) (*Users, error)
+	List(context.Context, *emptypb.Empty) (*Users, error)
 }
 
 // UnimplementedUserServiceServer should be embedded to have
@@ -79,7 +78,7 @@ type UnimplementedUserServiceServer struct{}
 func (UnimplementedUserServiceServer) Info(context.Context, *emptypb.Empty) (*User, error) {
 	return nil, status.Error(codes.Unimplemented, "method Info not implemented")
 }
-func (UnimplementedUserServiceServer) List(context.Context, *v1.RequestWithTextValue) (*Users, error) {
+func (UnimplementedUserServiceServer) List(context.Context, *emptypb.Empty) (*Users, error) {
 	return nil, status.Error(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedUserServiceServer) testEmbeddedByValue() {}
@@ -121,7 +120,7 @@ func _UserService_Info_Handler(srv interface{}, ctx context.Context, dec func(in
 }
 
 func _UserService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v1.RequestWithTextValue)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -133,7 +132,7 @@ func _UserService_List_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: UserService_List_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).List(ctx, req.(*v1.RequestWithTextValue))
+		return srv.(UserServiceServer).List(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

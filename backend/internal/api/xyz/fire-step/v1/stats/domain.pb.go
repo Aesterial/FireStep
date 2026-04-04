@@ -7,9 +7,12 @@
 package stats
 
 import (
+	seances "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/seances"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -20,19 +23,227 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Stats struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	SeanceCount   int32                  `protobuf:"varint,1,opt,name=seance_count,json=seanceCount,proto3" json:"seance_count,omitempty"`
+	ErrorsCount   int32                  `protobuf:"varint,2,opt,name=errors_count,json=errorsCount,proto3" json:"errors_count,omitempty"`
+	AvgSeconds    int32                  `protobuf:"varint,3,opt,name=avg_seconds,json=avgSeconds,proto3" json:"avg_seconds,omitempty"`
+	Latest        []*seances.Seance      `protobuf:"bytes,4,rep,name=latest,proto3" json:"latest,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Stats) Reset() {
+	*x = Stats{}
+	mi := &file_xyz_fire_step_v1_stats_domain_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Stats) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Stats) ProtoMessage() {}
+
+func (x *Stats) ProtoReflect() protoreflect.Message {
+	mi := &file_xyz_fire_step_v1_stats_domain_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Stats.ProtoReflect.Descriptor instead.
+func (*Stats) Descriptor() ([]byte, []int) {
+	return file_xyz_fire_step_v1_stats_domain_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Stats) GetSeanceCount() int32 {
+	if x != nil {
+		return x.SeanceCount
+	}
+	return 0
+}
+
+func (x *Stats) GetErrorsCount() int32 {
+	if x != nil {
+		return x.ErrorsCount
+	}
+	return 0
+}
+
+func (x *Stats) GetAvgSeconds() int32 {
+	if x != nil {
+		return x.AvgSeconds
+	}
+	return 0
+}
+
+func (x *Stats) GetLatest() []*seances.Seance {
+	if x != nil {
+		return x.Latest
+	}
+	return nil
+}
+
+type GraphPoint struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	At            *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=at,proto3" json:"at,omitempty"`
+	Count         int32                  `protobuf:"varint,2,opt,name=count,proto3" json:"count,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GraphPoint) Reset() {
+	*x = GraphPoint{}
+	mi := &file_xyz_fire_step_v1_stats_domain_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GraphPoint) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GraphPoint) ProtoMessage() {}
+
+func (x *GraphPoint) ProtoReflect() protoreflect.Message {
+	mi := &file_xyz_fire_step_v1_stats_domain_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GraphPoint.ProtoReflect.Descriptor instead.
+func (*GraphPoint) Descriptor() ([]byte, []int) {
+	return file_xyz_fire_step_v1_stats_domain_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GraphPoint) GetAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.At
+	}
+	return nil
+}
+
+func (x *GraphPoint) GetCount() int32 {
+	if x != nil {
+		return x.Count
+	}
+	return 0
+}
+
+type GraphStatsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Errors        []*GraphPoint          `protobuf:"bytes,1,rep,name=errors,proto3" json:"errors,omitempty"`
+	UsersActivity []*GraphPoint          `protobuf:"bytes,2,rep,name=users_activity,json=usersActivity,proto3" json:"users_activity,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GraphStatsResponse) Reset() {
+	*x = GraphStatsResponse{}
+	mi := &file_xyz_fire_step_v1_stats_domain_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GraphStatsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GraphStatsResponse) ProtoMessage() {}
+
+func (x *GraphStatsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_xyz_fire_step_v1_stats_domain_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GraphStatsResponse.ProtoReflect.Descriptor instead.
+func (*GraphStatsResponse) Descriptor() ([]byte, []int) {
+	return file_xyz_fire_step_v1_stats_domain_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GraphStatsResponse) GetErrors() []*GraphPoint {
+	if x != nil {
+		return x.Errors
+	}
+	return nil
+}
+
+func (x *GraphStatsResponse) GetUsersActivity() []*GraphPoint {
+	if x != nil {
+		return x.UsersActivity
+	}
+	return nil
+}
+
 var File_xyz_fire_step_v1_stats_domain_proto protoreflect.FileDescriptor
 
 const file_xyz_fire_step_v1_stats_domain_proto_rawDesc = "" +
 	"\n" +
-	"#xyz/fire-step/v1/stats/domain.proto\x12\x16xyz.fire_step.v1.statsBtZPgithub.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/stats;stats\xaa\x02\x1fAesterial.FireStep.Api.V1.Statsb\x06proto3"
+	"#xyz/fire-step/v1/stats/domain.proto\x12\x16xyz.fire_step.v1.stats\x1a%xyz/fire-step/v1/seances/domain.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa8\x01\n" +
+	"\x05Stats\x12!\n" +
+	"\fseance_count\x18\x01 \x01(\x05R\vseanceCount\x12!\n" +
+	"\ferrors_count\x18\x02 \x01(\x05R\verrorsCount\x12\x1f\n" +
+	"\vavg_seconds\x18\x03 \x01(\x05R\n" +
+	"avgSeconds\x128\n" +
+	"\x06latest\x18\x04 \x03(\v2 .xyz.fire_step.v1.seances.SeanceR\x06latest\"N\n" +
+	"\n" +
+	"GraphPoint\x12*\n" +
+	"\x02at\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x02at\x12\x14\n" +
+	"\x05count\x18\x02 \x01(\x05R\x05count\"\x9b\x01\n" +
+	"\x12GraphStatsResponse\x12:\n" +
+	"\x06errors\x18\x01 \x03(\v2\".xyz.fire_step.v1.stats.GraphPointR\x06errors\x12I\n" +
+	"\x0eusers_activity\x18\x02 \x03(\v2\".xyz.fire_step.v1.stats.GraphPointR\rusersActivityBtZPgithub.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/stats;stats\xaa\x02\x1fAesterial.FireStep.Api.V1.Statsb\x06proto3"
 
-var file_xyz_fire_step_v1_stats_domain_proto_goTypes = []any{}
+var (
+	file_xyz_fire_step_v1_stats_domain_proto_rawDescOnce sync.Once
+	file_xyz_fire_step_v1_stats_domain_proto_rawDescData []byte
+)
+
+func file_xyz_fire_step_v1_stats_domain_proto_rawDescGZIP() []byte {
+	file_xyz_fire_step_v1_stats_domain_proto_rawDescOnce.Do(func() {
+		file_xyz_fire_step_v1_stats_domain_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_xyz_fire_step_v1_stats_domain_proto_rawDesc), len(file_xyz_fire_step_v1_stats_domain_proto_rawDesc)))
+	})
+	return file_xyz_fire_step_v1_stats_domain_proto_rawDescData
+}
+
+var file_xyz_fire_step_v1_stats_domain_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_xyz_fire_step_v1_stats_domain_proto_goTypes = []any{
+	(*Stats)(nil),                 // 0: xyz.fire_step.v1.stats.Stats
+	(*GraphPoint)(nil),            // 1: xyz.fire_step.v1.stats.GraphPoint
+	(*GraphStatsResponse)(nil),    // 2: xyz.fire_step.v1.stats.GraphStatsResponse
+	(*seances.Seance)(nil),        // 3: xyz.fire_step.v1.seances.Seance
+	(*timestamppb.Timestamp)(nil), // 4: google.protobuf.Timestamp
+}
 var file_xyz_fire_step_v1_stats_domain_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	3, // 0: xyz.fire_step.v1.stats.Stats.latest:type_name -> xyz.fire_step.v1.seances.Seance
+	4, // 1: xyz.fire_step.v1.stats.GraphPoint.at:type_name -> google.protobuf.Timestamp
+	1, // 2: xyz.fire_step.v1.stats.GraphStatsResponse.errors:type_name -> xyz.fire_step.v1.stats.GraphPoint
+	1, // 3: xyz.fire_step.v1.stats.GraphStatsResponse.users_activity:type_name -> xyz.fire_step.v1.stats.GraphPoint
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_xyz_fire_step_v1_stats_domain_proto_init() }
@@ -46,12 +257,13 @@ func file_xyz_fire_step_v1_stats_domain_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_xyz_fire_step_v1_stats_domain_proto_rawDesc), len(file_xyz_fire_step_v1_stats_domain_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_xyz_fire_step_v1_stats_domain_proto_goTypes,
 		DependencyIndexes: file_xyz_fire_step_v1_stats_domain_proto_depIdxs,
+		MessageInfos:      file_xyz_fire_step_v1_stats_domain_proto_msgTypes,
 	}.Build()
 	File_xyz_fire_step_v1_stats_domain_proto = out.File
 	file_xyz_fire_step_v1_stats_domain_proto_goTypes = nil

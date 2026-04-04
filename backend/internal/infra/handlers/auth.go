@@ -62,6 +62,7 @@ func DeviceFromContext(ctx context.Context) (sessiondomain.DeviceType, error) {
 		}
 		return sessiondomain.ParseDeviceType(value), nil
 	}
+	loggingservice.Warning("", "no valid device found")
 	return "", apperrors.InvalidArguments
 }
 

@@ -55,11 +55,34 @@ returning id, owner, errors, actions, at, done;
 -- name: GetSeanceStatsByOrg :one
 SELECT COUNT(s.id)                              AS total_seances,
        COALESCE(SUM(s.errors), 0)               AS total_errors,
-       AVG(s.done - s.at)                       AS avg_execution_time,
        AVG(EXTRACT(EPOCH FROM (s.done - s.at))) AS avg_execution_time_seconds
 FROM seance s
          JOIN users u ON u.id = s.owner
 WHERE u.org = $1;
+
+-- name: GetLatestSeancesByOrg :many
+SELECT s.id, s.owner, s.errors, s.actions, s.at, s.done
+FROM seance s
+         JOIN users u ON u.id = s.owner
+WHERE u.org = $1
+ORDER BY s.at DESC
+LIMIT 7;
+
+-- name: GetErrorsPerHourByOrg :many
+SELECT date_trunc('hour', at)::timestamptz AS hour, SUM(errors)::int AS count
+FROM seance s
+         JOIN users u ON u.id = s.owner
+WHERE u.org = $1 AND at > NOW() - INTERVAL '24 hours'
+GROUP BY hour
+ORDER BY hour;
+
+-- name: GetActivityByDayByOrg :many
+SELECT date_trunc('day', at)::timestamptz AS day, COUNT(s.id)::int AS count
+FROM seance s
+         JOIN users u ON u.id = s.owner
+WHERE u.org = $1 AND at > NOW() - INTERVAL '7 days'
+GROUP BY day
+ORDER BY day;
 
 -- name: CreateSession :one
 insert into sessions (owner, device)
