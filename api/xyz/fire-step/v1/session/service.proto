@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package xyz.fire_step.v1.session;
+
+option go_package = "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/session;session";
+option csharp_namespace = "Aesterial.FireStep.Api.V1.Session";
+
+import "google/protobuf/empty.proto";
+import "xyz/fire-step/v1/session/domain.proto";
+
+message RevokeSessionRequest {
+  string id = 1;
+}
+
+service SessionsService {
+  rpc List(google.protobuf.Empty) returns (Sessions);
+  rpc Revoke(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

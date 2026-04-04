@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package xyz.fire_step.v1;
+
+option go_package = "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1;firestepv1";
+option csharp_namespace = "Aesterial.FireStep.Api.V1";
+
+message RequestWithTextValue {
+  string value = 1;
+}

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package xyz.fire_step.v1.user;
+
+option go_package = "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/user;user";
+option csharp_namespace = "Aesterial.FireStep.Api.V1.User";
+
+import "google/protobuf/timestamp.proto";
+
+message User {
+  string id = 1;
+  string username = 2;
+  string initials = 3;
+  string email = 4;
+  string org = 5;
+  google.protobuf.Timestamp joined = 6;
+}
+
+message Users {
+  repeated User list = 1;
+}

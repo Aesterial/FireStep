@@ -3,15 +3,23 @@ version: v2
 inputs:
   - directory: .
     paths:
-      - xyz/secureguard/v1
+      - xyz/fire-step/v1
 
 plugins:
   - local: protoc-gen-go
-    out: ../backend/internal
+    out: ../backend
     opt:
       - module=github.com/aesterial/fire-step/backend
   - local: protoc-gen-go-grpc
-    out: ../backend/internal
+    out: ../backend
     opt:
       - module=github.com/aesterial/fire-step/backend
       - require_unimplemented_servers=false
+  - remote: buf.build/protocolbuffers/csharp
+    out: ../client/csharp/Generated
+    opt:
+      - base_namespace=Aesterial.FireStep
+  - remote: buf.build/grpc/csharp
+    out: ../client/csharp/Generated
+    opt:
+      - base_namespace=Aesterial.FireStep

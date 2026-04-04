@@ -11,6 +11,8 @@ const CEILING_TEXTURE: Texture2D = preload("res://assets/textures/prototype/dark
 
 
 func _ready() -> void:
+	if not GameSession.ensure_authenticated(get_tree()):
+		return
 	_configure_player_spawn()
 	_configure_environment()
 	_build_world()
@@ -126,8 +128,10 @@ func _setup_hud() -> void:
 func _on_player_interact(interactable: Interactable) -> void:
 	match interactable.action_id:
 		"test_interaction":
+			GameSession.record_action("controls_lab/test_terminal")
 			hud.show_feedback("Взаимодействие работает успешно!", "success")
 		"start_main":
+			GameSession.record_action("controls_lab/start_scenario")
 			get_tree().change_scene_to_file("res://scenes/Main.tscn")
 
 

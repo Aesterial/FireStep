@@ -20,6 +20,8 @@ var main_lights: Array[OmniLight3D] = []
 
 
 func _ready() -> void:
+	if not GameSession.ensure_authenticated(get_tree()):
+		return
 	_configure_player_spawn()
 	_configure_environment()
 	_build_world()
@@ -224,6 +226,7 @@ func _disable_block(index: int, interactable: Interactable) -> void:
 	if not interactable.active:
 		return
 
+	GameSession.record_action("power_shutdown/disable_block_%d" % (index + 1))
 	interactable.active = false
 	var mat = block_materials[index]
 	mat.albedo_color = Color(0.18, 0.72, 0.28)
@@ -253,8 +256,11 @@ func _all_blocks_disabled() -> void:
 
 func _try_exit() -> void:
 	if blocks_disabled < 3:
+		GameSession.record_action("power_shutdown/exit_blocked")
 		hud.show_feedback("Сначала отключите все 3 электрощитка.", "warning")
 		return
+
+	GameSession.record_action("power_shutdown/exit_to_evacuation")
 
 	if GameSession.workshop_summary.is_empty():
 		GameSession.set_workshop_summary("Затем были обесточены все 3 щитка.")

@@ -48,6 +48,7 @@ func (d Database) IsValid() bool {
 type Config struct {
 	Database Database
 	Mode     Mode
+	Port     string
 	loaded   bool
 }
 

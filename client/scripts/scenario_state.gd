@@ -25,6 +25,7 @@ var idle_time: float = 0.0
 
 
 func begin() -> void:
+	GameSession.record_action("main/phase_wait_stop")
 	phase = Phase.WAIT_STOP
 	idle_time = 0.0
 	objective_changed.emit("1. Обнаружьте дым и нажмите аварийную остановку.")
@@ -55,6 +56,8 @@ func handle_action(action_id: String) -> void:
 	if is_finished():
 		return
 
+	GameSession.record_action("main/action/%s" % action_id)
+
 	match action_id:
 		"emergency_stop":
 			_handle_emergency_stop()
@@ -71,6 +74,8 @@ func on_safe_zone_entered() -> void:
 	if phase != Phase.MOVE_TO_SAFE_ZONE:
 		return
 
+	GameSession.record_action("main/reached_safe_zone")
+
 	phase = Phase.DECISION
 	objective_changed.emit("3. На безопасной дистанции выберите следующее действие.")
 	hint_changed.emit("Откроется панель решения. Сначала обеспечьте вызов помощи.")
@@ -85,6 +90,8 @@ func on_safe_zone_entered() -> void:
 func submit_decision(choice: String) -> void:
 	if phase != Phase.DECISION:
 		return
+
+	GameSession.record_action("main/decision/%s" % choice)
 
 	match choice:
 		"alarm":
@@ -113,6 +120,7 @@ func is_finished() -> bool:
 
 func _handle_emergency_stop() -> void:
 	if phase == Phase.WAIT_STOP:
+		GameSession.record_action("main/emergency_stop_confirmed")
 		phase = Phase.MOVE_TO_SAFE_ZONE
 		objective_changed.emit("2. Перейдите в отмеченную безопасную зону.")
 		hint_changed.emit("Отойдите к зелёной зоне, прежде чем принимать следующее решение.")
@@ -137,6 +145,7 @@ func _handle_exit() -> void:
 
 
 func _succeed() -> void:
+	GameSession.record_action("main/phase_success")
 	phase = Phase.SUCCESS
 	set_process(false)
 	banner_changed.emit("Этап в цехе завершён. Проверьте резервный генератор в соседнем модуле.", "safe")
@@ -151,6 +160,7 @@ func _succeed() -> void:
 
 
 func _fail(title: String, body: String) -> void:
+	GameSession.record_action("main/phase_failure")
 	phase = Phase.FAILURE
 	set_process(false)
 	banner_changed.emit("[ОПАСНОСТЬ] Риск пожара возрастает.", "critical")

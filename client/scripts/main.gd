@@ -40,6 +40,8 @@ var visual_state: String = "warning"
 
 
 func _ready() -> void:
+	if not GameSession.ensure_authenticated(get_tree()):
+		return
 	_configure_player_spawn()
 	_configure_environment()
 	_configure_materials()

@@ -60,6 +60,7 @@ func Ensure() bool {
 			}
 			return configdomain.ModeProduction
 		}(),
+		Port: os.Getenv("PORT"),
 	}
 	cfg.MarkLoaded()
 	return cfg.IsDatabaseValid()

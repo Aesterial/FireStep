@@ -24,6 +24,8 @@ var smoke_materials: Array[StandardMaterial3D] = []
 
 
 func _ready() -> void:
+	if not GameSession.ensure_authenticated(get_tree()):
+		return
 	_configure_player_spawn()
 	_configure_environment()
 	_build_world()
@@ -190,6 +192,7 @@ func _disable_generator() -> void:
 		hud.show_feedback("Резервный генератор уже обесточен.", "info")
 		return
 
+	GameSession.record_action("secondary_generator/disable_generator")
 	generator_disabled = true
 	switch_material.albedo_color = Color(0.18, 0.72, 0.28)
 	switch_material.emission = Color(0.18, 0.72, 0.28)
@@ -207,8 +210,11 @@ func _disable_generator() -> void:
 
 func _try_exit() -> void:
 	if not generator_disabled:
+		GameSession.record_action("secondary_generator/exit_blocked")
 		hud.show_feedback("Сначала отключите резервный генератор. Иначе соседний модуль остаётся под риском.", "warning")
 		return
+
+	GameSession.record_action("secondary_generator/exit_to_power_shutdown")
 
 	if GameSession.workshop_summary.is_empty():
 		GameSession.set_workshop_summary("Первичный очаг локализован, затем резервный генератор был обесточен перед эвакуацией.")

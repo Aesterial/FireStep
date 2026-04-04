@@ -12,6 +12,8 @@ const CHIMNEY_SMALL_SCENE: PackedScene = preload("res://assets/models/chimney-sm
 
 
 func _ready() -> void:
+	if not GameSession.ensure_authenticated(get_tree()):
+		return
 	_configure_player_spawn()
 	_configure_environment()
 	_build_world()
@@ -136,6 +138,7 @@ func _on_player_interact(interactable: Interactable) -> void:
 
 
 func _complete_success() -> void:
+	GameSession.record_action("evacuation/assembly_point_confirmed")
 	GameSession.set_final_result(
 		true,
 		"Тренировка пройдена",
@@ -152,6 +155,7 @@ func _complete_success() -> void:
 
 
 func _complete_failure(title: String, body: String) -> void:
+	GameSession.record_action("evacuation/returned_to_danger")
 	GameSession.add_error()
 	GameSession.set_final_result(
 		false,

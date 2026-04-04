@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package xyz.fire_step.v1.session;
+
+option go_package = "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/session;session";
+option csharp_namespace = "Aesterial.FireStep.Api.V1.Session";
+
+import "google/protobuf/timestamp.proto";
+
+enum DeviceType {
+  UNSPECIFIED = 0;
+  CLIENT = 1;
+  WEB = 2;
+}
+
+message Session {
+  string id = 1;
+  string ownerId = 2;
+  DeviceType device = 3;
+  google.protobuf.Timestamp createdAt = 4;
+  google.protobuf.Timestamp expiresAt = 5;
+  google.protobuf.Timestamp lastSeenAt = 6;
+}
+
+message Sessions {
+  repeated Session list = 1;
+}

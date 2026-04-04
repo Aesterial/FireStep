@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package xyz.fire_step.v1.login;
+
+option go_package = "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/login;login";
+option csharp_namespace = "Aesterial.FireStep.Api.V1.Login";
+
+import "xyz/fire-step/v1/user/domain.proto";
+
+message RegisterRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+  string initials = 4;
+  string org = 5;
+}
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  xyz.fire_step.v1.user.User info = 1;
+  string session = 2;
+}

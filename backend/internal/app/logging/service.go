@@ -69,3 +69,5 @@ func Critical(service string, content string, fields ...loggingdomain.Field) {
 	}
 	def.Critical(service, content, fields)
 }
+
+var FD = loggingdomain.FD

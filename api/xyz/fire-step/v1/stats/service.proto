@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+package xyz.fire_step.v1.stats;
+
+option go_package = "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/stats;stats";
+option csharp_namespace = "Aesterial.FireStep.Api.V1.Stats";

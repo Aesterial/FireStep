@@ -6,6 +6,8 @@ var click_player: AudioStreamPlayer
 
 
 func _ready() -> void:
+	if not GameSession.ensure_authenticated(get_tree()):
+		return
 	click_player = UISkin.make_click_player(self)
 	_build_ui()
 
@@ -87,7 +89,7 @@ func _build_ui() -> void:
 		box.add_child(bullet)
 
 	var hint := Label.new()
-	hint.text = "Проверка маршрута и список использованных ассетов описаны в docs/TEST_PLAN.md и docs/ASSETS.md."
+	hint.text = "Проверка маршрута и список использованных ассетов описаны в docs/TEST_PLAN.md и docs/ASSETS.md.\nСохранение: %s" % GameSession.save_status_text
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	UISkin.apply_body(hint, 15, Color(0.94, 0.97, 1.0))
 	box.add_child(hint)
@@ -138,7 +140,7 @@ func _build_ui() -> void:
 
 
 func _on_restart_pressed() -> void:
-	GameSession.reset_session()
+	GameSession.reset_session(true)
 	get_tree().change_scene_to_file("res://scenes/Main.tscn")
 
 

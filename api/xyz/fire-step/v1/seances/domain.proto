@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package xyz.fire_step.v1.seances;
+
+option go_package = "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/seances;seances";
+option csharp_namespace = "Aesterial.FireStep.Api.V1.Seances";
+
+import "google/protobuf/timestamp.proto";
+
+message Seance {
+  string id = 1;
+  string ownerId = 2;
+  int32 errors = 3;
+  string actionsJson = 4;
+  google.protobuf.Timestamp at = 5;
+  google.protobuf.Timestamp done = 6;
+}
+
+message Action {
+  int32 id = 1;
+  string action = 2;
+  google.protobuf.Timestamp at = 3;
+}
+
+message Seances {
+  repeated Seance list = 1;
+}

@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package xyz.fire_step.v1.login;
+
+option go_package = "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/login;login";
+option csharp_namespace = "Aesterial.FireStep.Api.V1.Login";
+
+import "xyz/fire-step/v1/login/domain.proto";
+import "xyz/fire-step/v1/user/domain.proto";
+import "google/protobuf/empty.proto";
+
+service LoginService {
+  rpc Register(RegisterRequest) returns (xyz.fire_step.v1.user.User);
+  rpc Login(LoginRequest) returns (xyz.fire_step.v1.user.User);
+  rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
+}

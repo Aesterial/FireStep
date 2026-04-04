@@ -6,6 +6,8 @@ var click_player: AudioStreamPlayer
 
 
 func _ready() -> void:
+	if not GameSession.ensure_authenticated(get_tree()):
+		return
 	click_player = UISkin.make_click_player(self)
 	_build_ui()
 
@@ -62,6 +64,7 @@ func _build_ui() -> void:
 
 func _on_start_pressed() -> void:
 	GameSession.reset_session(true)
+	GameSession.record_action("briefing/start_training")
 	get_tree().change_scene_to_file("res://scenes/ControlsLab.tscn")
 
 

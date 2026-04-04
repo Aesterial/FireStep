@@ -1,0 +1,126 @@
+extends Node
+
+const BACKEND_URL := "http://127.0.0.1:8080"
+const AUTH_REDIRECT_URL := "http://127.0.0.1:3000"
+const TOOL_PROJECT_PATH := "res://csharp-tool/Aesterial.FireStep.Client.Grpc.Tool.csproj"
+const TOOL_BINARY_PATH := "res://csharp-tool/bin/Debug/net8.0/Aesterial.FireStep.Client.Grpc.Tool.dll"
+
+var last_error: String = ""
+
+
+func login(username: String, password: String) -> Dictionary:
+	return _wrap_data(_run_tool([
+		"login",
+		"--server", BACKEND_URL,
+		"--username", username,
+		"--password", password,
+	]))
+
+
+func register_user(username: String, email: String, password: String, initials: String, org: String) -> Dictionary:
+	return _wrap_data(_run_tool([
+		"register",
+		"--server", BACKEND_URL,
+		"--username", username,
+		"--email", email,
+		"--password", password,
+		"--initials", initials,
+		"--org", org,
+	]))
+
+
+func validate_session(session_token: String) -> Dictionary:
+	return _wrap_data(_run_tool([
+		"validate",
+		"--server", BACKEND_URL,
+		"--session-token", session_token,
+	]))
+
+
+func save_seance(payload_path: String) -> Dictionary:
+	return _wrap_data(_run_tool([
+		"save-seance",
+		"--server", BACKEND_URL,
+		"--payload-file", ProjectSettings.globalize_path(payload_path),
+	]))
+
+
+func open_auth_redirect() -> void:
+	OS.shell_open(AUTH_REDIRECT_URL)
+
+
+func _run_tool(arguments: Array[String]) -> Dictionary:
+	if not _ensure_tool_built():
+		return {
+			"success": false,
+			"error": last_error,
+		}
+
+	var output: Array = []
+	var exit_code := OS.execute(
+		"dotnet",
+		[ProjectSettings.globalize_path(TOOL_BINARY_PATH)] + arguments,
+		output,
+		true,
+		false
+	)
+
+	var text := ""
+	for line in output:
+		text += str(line)
+
+	var parsed = JSON.parse_string(text.strip_edges())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		last_error = "Helper returned invalid JSON: %s" % text.strip_edges()
+		return {
+			"success": false,
+			"error": last_error,
+		}
+
+	var success := bool(parsed.get("success", false)) and exit_code == 0
+	if not success:
+		last_error = str(parsed.get("error", "Unknown helper error"))
+		return {
+			"success": false,
+			"error": last_error,
+		}
+
+	return {
+		"success": true,
+		"data": parsed.get("data", {}),
+	}
+
+
+func _wrap_data(response: Dictionary) -> Dictionary:
+	if not response.get("success", false):
+		return response
+
+	var data = response.get("data", {})
+	if typeof(data) != TYPE_DICTIONARY:
+		return {"success": true}
+
+	var result = data.duplicate(true)
+	result["success"] = true
+	return result
+
+
+func _ensure_tool_built() -> bool:
+	var binary_path := ProjectSettings.globalize_path(TOOL_BINARY_PATH)
+	if FileAccess.file_exists(binary_path):
+		return true
+
+	var output: Array = []
+	var exit_code := OS.execute(
+		"dotnet",
+		["build", ProjectSettings.globalize_path(TOOL_PROJECT_PATH)],
+		output,
+		true,
+		false
+	)
+	if exit_code != 0:
+		last_error = ""
+		for line in output:
+			last_error += str(line)
+		return false
+
+	return FileAccess.file_exists(binary_path)

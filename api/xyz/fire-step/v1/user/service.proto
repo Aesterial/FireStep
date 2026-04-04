@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package xyz.fire_step.v1.user;
+
+option go_package = "github.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/user;user";
+option csharp_namespace = "Aesterial.FireStep.Api.V1.User";
+
+import "google/protobuf/empty.proto";
+import "xyz/fire-step/v1/user/domain.proto";
+import "xyz/fire-step/v1/types.proto";
+
+service UserService {
+  rpc Info(google.protobuf.Empty) returns (User);
+  rpc List(xyz.fire_step.v1.RequestWithTextValue) returns (Users);
+}
