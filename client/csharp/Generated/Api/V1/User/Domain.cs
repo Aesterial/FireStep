@@ -26,18 +26,19 @@ namespace Aesterial.FireStep.Api.V1.User {
           string.Concat(
             "CiJ4eXovZmlyZS1zdGVwL3YxL3VzZXIvZG9tYWluLnByb3RvEhV4eXouZmly",
             "ZV9zdGVwLnYxLnVzZXIaH2dvb2dsZS9wcm90b2J1Zi90aW1lc3RhbXAucHJv",
-            "dG8iqgEKBFVzZXISDgoCaWQYASABKAlSAmlkEhoKCHVzZXJuYW1lGAIgASgJ",
+            "dG8iwAEKBFVzZXISDgoCaWQYASABKAlSAmlkEhoKCHVzZXJuYW1lGAIgASgJ",
             "Ugh1c2VybmFtZRIaCghpbml0aWFscxgDIAEoCVIIaW5pdGlhbHMSFAoFZW1h",
-            "aWwYBCABKAlSBWVtYWlsEhAKA29yZxgFIAEoCVIDb3JnEjIKBmpvaW5lZBgG",
-            "IAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBSBmpvaW5lZCI4CgVV",
-            "c2VycxIvCgRsaXN0GAEgAygLMhsueHl6LmZpcmVfc3RlcC52MS51c2VyLlVz",
-            "ZXJSBGxpc3RCcVpOZ2l0aHViLmNvbS9hZXN0ZXJpYWwvZmlyZS1zdGVwL2Jh",
-            "Y2tlbmQvaW50ZXJuYWwvYXBpL3h5ei9maXJlLXN0ZXAvdjEvdXNlcjt1c2Vy",
-            "qgIeQWVzdGVyaWFsLkZpcmVTdGVwLkFwaS5WMS5Vc2VyYgZwcm90bzM="));
+            "aWwYBCABKAlSBWVtYWlsEhAKA29yZxgFIAEoCVIDb3JnEhQKBWFkbWluGAYg",
+            "ASgIUgVhZG1pbhIyCgZqb2luZWQYByABKAsyGi5nb29nbGUucHJvdG9idWYu",
+            "VGltZXN0YW1wUgZqb2luZWQiOAoFVXNlcnMSLwoEbGlzdBgBIAMoCzIbLnh5",
+            "ei5maXJlX3N0ZXAudjEudXNlci5Vc2VyUgRsaXN0QnFaTmdpdGh1Yi5jb20v",
+            "YWVzdGVyaWFsL2ZpcmUtc3RlcC9iYWNrZW5kL2ludGVybmFsL2FwaS94eXov",
+            "ZmlyZS1zdGVwL3YxL3VzZXI7dXNlcqoCHkFlc3RlcmlhbC5GaXJlU3RlcC5B",
+            "cGkuVjEuVXNlcmIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Aesterial.FireStep.Api.V1.User.User), global::Aesterial.FireStep.Api.V1.User.User.Parser, new[]{ "Id", "Username", "Initials", "Email", "Org", "Joined" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Aesterial.FireStep.Api.V1.User.User), global::Aesterial.FireStep.Api.V1.User.User.Parser, new[]{ "Id", "Username", "Initials", "Email", "Org", "Admin", "Joined" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Aesterial.FireStep.Api.V1.User.Users), global::Aesterial.FireStep.Api.V1.User.Users.Parser, new[]{ "List" }, null, null, null, null)
           }));
     }
@@ -85,6 +86,7 @@ namespace Aesterial.FireStep.Api.V1.User {
       initials_ = other.initials_;
       email_ = other.email_;
       org_ = other.org_;
+      admin_ = other.admin_;
       joined_ = other.joined_ != null ? other.joined_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -155,8 +157,20 @@ namespace Aesterial.FireStep.Api.V1.User {
       }
     }
 
+    /// <summary>Field number for the "admin" field.</summary>
+    public const int AdminFieldNumber = 6;
+    private bool admin_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Admin {
+      get { return admin_; }
+      set {
+        admin_ = value;
+      }
+    }
+
     /// <summary>Field number for the "joined" field.</summary>
-    public const int JoinedFieldNumber = 6;
+    public const int JoinedFieldNumber = 7;
     private global::Google.Protobuf.WellKnownTypes.Timestamp joined_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -187,6 +201,7 @@ namespace Aesterial.FireStep.Api.V1.User {
       if (Initials != other.Initials) return false;
       if (Email != other.Email) return false;
       if (Org != other.Org) return false;
+      if (Admin != other.Admin) return false;
       if (!object.Equals(Joined, other.Joined)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -200,6 +215,7 @@ namespace Aesterial.FireStep.Api.V1.User {
       if (Initials.Length != 0) hash ^= Initials.GetHashCode();
       if (Email.Length != 0) hash ^= Email.GetHashCode();
       if (Org.Length != 0) hash ^= Org.GetHashCode();
+      if (Admin != false) hash ^= Admin.GetHashCode();
       if (joined_ != null) hash ^= Joined.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -239,8 +255,12 @@ namespace Aesterial.FireStep.Api.V1.User {
         output.WriteRawTag(42);
         output.WriteString(Org);
       }
+      if (Admin != false) {
+        output.WriteRawTag(48);
+        output.WriteBool(Admin);
+      }
       if (joined_ != null) {
-        output.WriteRawTag(50);
+        output.WriteRawTag(58);
         output.WriteMessage(Joined);
       }
       if (_unknownFields != null) {
@@ -273,8 +293,12 @@ namespace Aesterial.FireStep.Api.V1.User {
         output.WriteRawTag(42);
         output.WriteString(Org);
       }
+      if (Admin != false) {
+        output.WriteRawTag(48);
+        output.WriteBool(Admin);
+      }
       if (joined_ != null) {
-        output.WriteRawTag(50);
+        output.WriteRawTag(58);
         output.WriteMessage(Joined);
       }
       if (_unknownFields != null) {
@@ -301,6 +325,9 @@ namespace Aesterial.FireStep.Api.V1.User {
       }
       if (Org.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Org);
+      }
+      if (Admin != false) {
+        size += 1 + 1;
       }
       if (joined_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Joined);
@@ -331,6 +358,9 @@ namespace Aesterial.FireStep.Api.V1.User {
       }
       if (other.Org.Length != 0) {
         Org = other.Org;
+      }
+      if (other.Admin != false) {
+        Admin = other.Admin;
       }
       if (other.joined_ != null) {
         if (joined_ == null) {
@@ -377,7 +407,11 @@ namespace Aesterial.FireStep.Api.V1.User {
             Org = input.ReadString();
             break;
           }
-          case 50: {
+          case 48: {
+            Admin = input.ReadBool();
+            break;
+          }
+          case 58: {
             if (joined_ == null) {
               Joined = new global::Google.Protobuf.WellKnownTypes.Timestamp();
             }
@@ -423,7 +457,11 @@ namespace Aesterial.FireStep.Api.V1.User {
             Org = input.ReadString();
             break;
           }
-          case 50: {
+          case 48: {
+            Admin = input.ReadBool();
+            break;
+          }
+          case 58: {
             if (joined_ == null) {
               Joined = new global::Google.Protobuf.WellKnownTypes.Timestamp();
             }
