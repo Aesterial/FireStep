@@ -19,7 +19,7 @@ try
 
     var command = args[0].Trim().ToLowerInvariant();
     var options = ParseOptions(args.Skip(1).ToArray());
-    var server = GetOption(options, "server", FireStepApiConstants.DefaultServerAddress);
+    var server = GetOption(options, "server", string.Empty);
 
     using var client = new FireStepApiClient(server);
 
@@ -148,10 +148,10 @@ static string FormatRpcException(RpcException exception)
 {
     return exception.StatusCode switch
     {
-        StatusCode.InvalidArgument => "Backend отклонил запрос: неверные аргументы.",
+        StatusCode.InvalidArgument => "Сервис отклонил запрос: неверные аргументы.",
         StatusCode.AlreadyExists => "Такие учётные данные уже используются.",
         StatusCode.Unauthenticated => "Авторизация не пройдена. Проверьте логин, пароль или сохранённую сессию.",
-        StatusCode.Unavailable => "Backend недоступен по указанному адресу.",
+        StatusCode.Unavailable => "Сервис недоступен по указанному адресу.",
         _ => string.IsNullOrWhiteSpace(exception.Status.Detail)
             ? $"gRPC error: {exception.StatusCode}"
             : exception.Status.Detail,

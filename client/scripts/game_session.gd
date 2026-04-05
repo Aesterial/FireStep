@@ -258,7 +258,7 @@ func flush_pending_seance() -> void:
 
 	var response = ApiClient.save_seance(PENDING_SEANCE_PATH)
 	if response.get("success", false):
-		save_status_text = "Прохождение сохранено в backend."
+		save_status_text = "Прохождение синхронизировано."
 		_clear_pending_seance_file()
 	else:
 		save_status_text = "Не удалось досохранить прошлую сессию: %s" % str(response.get("error", "unknown error"))
@@ -268,15 +268,15 @@ func _submit_finished_seance() -> void:
 	_persist_pending_seance(true)
 
 	if not is_authenticated():
-		save_status_text = "Сессия сохранена локально. Требуется повторная авторизация для отправки в backend."
+		save_status_text = "Сессия сохранена локально. После повторной авторизации данные можно синхронизировать."
 		return
 
 	var response = ApiClient.save_seance(PENDING_SEANCE_PATH)
 	if response.get("success", false):
-		save_status_text = "Прохождение сохранено в backend."
+		save_status_text = "Прохождение синхронизировано."
 		_clear_pending_seance_file()
 	else:
-		save_status_text = "Ошибка отправки в backend: %s. Данные оставлены локально." % str(response.get("error", "unknown error"))
+		save_status_text = "Ошибка синхронизации: %s. Данные оставлены локально." % str(response.get("error", "unknown error"))
 
 
 func _persist_pending_seance(finalized: bool) -> void:

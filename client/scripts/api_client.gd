@@ -1,7 +1,9 @@
 extends Node
 
-const BACKEND_URL := "http://127.0.0.1:8080"
-const AUTH_REDIRECT_URL := "http://127.0.0.1:3000"
+const SERVICE_ENDPOINT_SETTING := "firestep/network/api_endpoint"
+const AUTH_ENDPOINT_SETTING := "firestep/network/auth_endpoint"
+const SERVICE_ENDPOINT_ENV := "FIRESTEP_API_ENDPOINT"
+const AUTH_ENDPOINT_ENV := "FIRESTEP_AUTH_ENDPOINT"
 const TOOL_PROJECT_PATH := "res://csharp-tool/Aesterial.FireStep.Client.Grpc.Tool.csproj"
 const TOOL_BINARY_PATH := "res://csharp-tool/bin/Debug/net8.0/Aesterial.FireStep.Client.Grpc.Tool.dll"
 
@@ -9,18 +11,26 @@ var last_error: String = ""
 
 
 func login(username: String, password: String) -> Dictionary:
+	var service_endpoint := get_service_endpoint()
+	if service_endpoint.is_empty():
+		return _config_error("Адрес API не настроен.")
+
 	return _wrap_data(_run_tool([
 		"login",
-		"--server", BACKEND_URL,
+		"--server", service_endpoint,
 		"--username", username,
 		"--password", password,
 	]))
 
 
 func register_user(username: String, email: String, password: String, initials: String, org: String) -> Dictionary:
+	var service_endpoint := get_service_endpoint()
+	if service_endpoint.is_empty():
+		return _config_error("Адрес API не настроен.")
+
 	return _wrap_data(_run_tool([
 		"register",
-		"--server", BACKEND_URL,
+		"--server", service_endpoint,
 		"--username", username,
 		"--email", email,
 		"--password", password,
@@ -30,23 +40,50 @@ func register_user(username: String, email: String, password: String, initials: 
 
 
 func validate_session(session_token: String) -> Dictionary:
+	var service_endpoint := get_service_endpoint()
+	if service_endpoint.is_empty():
+		return _config_error("Адрес API не настроен.")
+
 	return _wrap_data(_run_tool([
 		"validate",
-		"--server", BACKEND_URL,
+		"--server", service_endpoint,
 		"--session-token", session_token,
 	]))
 
 
 func save_seance(payload_path: String) -> Dictionary:
+	var service_endpoint := get_service_endpoint()
+	if service_endpoint.is_empty():
+		return _config_error("Адрес API не настроен.")
+
 	return _wrap_data(_run_tool([
 		"save-seance",
-		"--server", BACKEND_URL,
+		"--server", service_endpoint,
 		"--payload-file", ProjectSettings.globalize_path(payload_path),
 	]))
 
 
-func open_auth_redirect() -> void:
-	OS.shell_open(AUTH_REDIRECT_URL)
+func open_auth_redirect() -> Dictionary:
+	var auth_redirect_url := get_auth_redirect_url()
+	if auth_redirect_url.is_empty():
+		return _config_error("Адрес авторизации не настроен.")
+
+	OS.shell_open(auth_redirect_url)
+	return {"success": true}
+
+
+func get_service_endpoint() -> String:
+	return _read_endpoint(SERVICE_ENDPOINT_SETTING, SERVICE_ENDPOINT_ENV)
+
+
+func get_auth_redirect_url() -> String:
+	var auth_endpoint := _read_endpoint(AUTH_ENDPOINT_SETTING, AUTH_ENDPOINT_ENV)
+	if auth_endpoint.is_empty():
+		return ""
+
+	if not auth_endpoint.ends_with("/"):
+		auth_endpoint += "/"
+	return auth_endpoint + "client-auth"
 
 
 func _run_tool(arguments: Array[String]) -> Dictionary:
@@ -102,6 +139,21 @@ func _wrap_data(response: Dictionary) -> Dictionary:
 	var result = data.duplicate(true)
 	result["success"] = true
 	return result
+
+
+func _config_error(message: String) -> Dictionary:
+	last_error = message
+	return {
+		"success": false,
+		"error": message,
+	}
+
+
+func _read_endpoint(setting_path: String, env_name: String) -> String:
+	var value := str(ProjectSettings.get_setting(setting_path, ""))
+	if value.is_empty():
+		value = OS.get_environment(env_name)
+	return value.strip_edges()
 
 
 func _ensure_tool_built() -> bool:

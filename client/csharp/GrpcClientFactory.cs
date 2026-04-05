@@ -9,8 +9,6 @@ namespace Aesterial.FireStep.Client.Grpc;
 
 public static class GrpcClientFactory
 {
-    public const string DefaultServerAddress = FireStepApiConstants.DefaultServerAddress;
-
     public static GrpcChannel CreateChannel(string? address = null)
     {
         AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
@@ -54,6 +52,17 @@ public static class GrpcClientFactory
 
     private static string ResolveAddress(string? address)
     {
-        return string.IsNullOrWhiteSpace(address) ? DefaultServerAddress : address;
+        var resolvedAddress = string.IsNullOrWhiteSpace(address)
+            ? Environment.GetEnvironmentVariable(FireStepApiConstants.ApiEndpointEnvironmentVariable)
+            : address;
+
+        if (string.IsNullOrWhiteSpace(resolvedAddress))
+        {
+            throw new InvalidOperationException(
+                $"API endpoint is not configured. Set {FireStepApiConstants.ApiEndpointEnvironmentVariable} or pass --server."
+            );
+        }
+
+        return resolvedAddress;
     }
 }

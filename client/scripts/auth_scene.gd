@@ -58,34 +58,23 @@ func _build_ui() -> void:
 	UISkin.apply_button(auth_button, "green")
 	_wire_click(auth_button)
 	auth_button.pressed.connect(func() -> void:
+		status_label.text = "Открываем страницу авторизации..."
+		var result = ApiClient.open_auth_redirect()
+		if not result.get("success", false):
+			status_label.text = str(result.get("error", "Не удалось открыть страницу авторизации."))
+			return
 		status_label.text = "Ожидание авторизации в браузере..."
-		var url = ApiClient.AUTH_REDIRECT_URL
-		if not url.ends_with("/"):
-			url += "/"
-		url += "client-auth"
-		OS.shell_open(url)
 	)
 	root.add_child(auth_button)
 
 	root.add_child(UISkin.make_divider())
 
-	var links := VBoxContainer.new()
-	links.add_theme_constant_override("separation", 8)
-	root.add_child(links)
-
-	var backend_label := Label.new()
-	backend_label.text = "Backend: %s" % ApiClient.BACKEND_URL
-	UISkin.apply_body(backend_label, 14, Color(0.88, 0.93, 1.0))
-	links.add_child(backend_label)
-
-	var redirect_label := Label.new()
-	var frontend_url = ApiClient.AUTH_REDIRECT_URL
-	if not frontend_url.ends_with("/"):
-		frontend_url += "/"
-	frontend_url += "client-auth"
-	redirect_label.text = "Frontend Auth URL: %s" % frontend_url
-	UISkin.apply_body(redirect_label, 14, Color(0.88, 0.93, 1.0))
-	links.add_child(redirect_label)
+	var config_hint := Label.new()
+	config_hint.text = "Параметры подключения берутся из локальной конфигурации окружения."
+	config_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	config_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	UISkin.apply_body(config_hint, 14, Color(0.88, 0.93, 1.0))
+	root.add_child(config_hint)
 
 
 func _try_restore_session() -> void:

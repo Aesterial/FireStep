@@ -140,7 +140,7 @@ public sealed class FireStepApiClient : IDisposable
         var entry = headers.FirstOrDefault(static h => string.Equals(h.Key, FireStepApiConstants.SessionHeaderName, StringComparison.OrdinalIgnoreCase));
         if (entry == null || string.IsNullOrWhiteSpace(entry.Value))
         {
-            throw new InvalidOperationException("Backend returned no session header.");
+            throw new InvalidOperationException("Сервис не вернул заголовок сессии.");
         }
 
         return entry.Value;
