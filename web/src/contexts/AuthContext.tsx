@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 
@@ -69,26 +70,50 @@ function persistUser(nextUser: CurrentUser | null) {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const authMutationRef = useRef(0);
 
-  const applyUser = (nextUser: CurrentUser | null) => {
+  const applyUser = useCallback((nextUser: CurrentUser | null) => {
+    authMutationRef.current += 1;
     setUser(nextUser);
     persistUser(nextUser);
-  };
+    setIsLoading(false);
+  }, []);
 
   const refresh = useCallback(async () => {
+    const requestVersion = authMutationRef.current;
+
     try {
       const nextUser = await fetchCurrentUser();
-      applyUser(nextUser);
+
+      if (requestVersion !== authMutationRef.current) {
+        return nextUser;
+      }
+
+      if (nextUser) {
+        setUser(nextUser);
+        persistUser(nextUser);
+        return nextUser;
+      }
+
+      setUser((previous) => {
+        if (previous) {
+          return previous;
+        }
+
+        persistUser(null);
+        return null;
+      });
+
       return nextUser;
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     await authService.logout();
     applyUser(null);
-  };
+  }, [applyUser]);
 
   useEffect(() => {
     const storedUser = readStoredUser();
