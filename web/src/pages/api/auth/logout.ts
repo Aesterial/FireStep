@@ -5,7 +5,7 @@ import {
   GrpcBackendError,
   logoutWithBackend,
   SESSION_COOKIE_NAME,
-} from '../../../server/grpc/auth';
+} from '../../../server/grpc/firestep';
 
 interface ErrorResponse {
   message: string;
@@ -51,8 +51,8 @@ export default async function handler(
       return;
     }
 
-    response
-      .status(500)
-      .json({ message: 'Не удалось завершить сессию.' } satisfies ErrorResponse);
+    response.status(500).json({
+      message: 'Не удалось завершить сессию.',
+    } satisfies ErrorResponse);
   }
 }

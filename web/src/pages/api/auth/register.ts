@@ -3,10 +3,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import type { RegisterRequest } from '../../../contracts/auth';
 import {
+  detectAdminBySession,
   GrpcBackendError,
   registerWithBackend,
   SESSION_COOKIE_NAME,
-} from '../../../server/grpc/auth';
+} from '../../../server/grpc/firestep';
 
 interface ErrorResponse {
   message: string;
@@ -54,6 +55,8 @@ export default async function handler(
       throw new GrpcBackendError('Backend не вернул идентификатор сессии.', 502);
     }
 
+    const isAdmin = await detectAdminBySession(result.sessionId);
+
     response.setHeader(
       'Set-Cookie',
       serialize(SESSION_COOKIE_NAME, result.sessionId, {
@@ -64,7 +67,12 @@ export default async function handler(
       }),
     );
 
-    response.status(200).json({ user: result.user });
+    response.status(200).json({
+      user: {
+        ...result.user,
+        isAdmin,
+      },
+    });
   } catch (error) {
     if (error instanceof GrpcBackendError) {
       response
@@ -73,8 +81,8 @@ export default async function handler(
       return;
     }
 
-    response
-      .status(500)
-      .json({ message: 'Внутренняя ошибка auth proxy.' } satisfies ErrorResponse);
+    response.status(500).json({
+      message: 'Внутренняя ошибка auth proxy.',
+    } satisfies ErrorResponse);
   }
 }

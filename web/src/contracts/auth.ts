@@ -1,3 +1,5 @@
+import type { CurrentUser } from './app';
+
 export interface LoginRequest {
   username: string;
   password: string;
@@ -21,7 +23,7 @@ export interface UserInfo {
 }
 
 export interface AuthResponse {
-  user: UserInfo;
+  user: CurrentUser;
 }
 
 export interface LogoutResponse {

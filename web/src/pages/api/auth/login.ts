@@ -3,10 +3,11 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 import type { LoginRequest } from '../../../contracts/auth';
 import {
+  detectAdminBySession,
   GrpcBackendError,
   loginWithBackend,
   SESSION_COOKIE_NAME,
-} from '../../../server/grpc/auth';
+} from '../../../server/grpc/firestep';
 
 interface ErrorResponse {
   message: string;
@@ -37,9 +38,9 @@ export default async function handler(
   }
 
   if (!isLoginRequest(request.body)) {
-    response
-      .status(400)
-      .json({ message: 'Некорректный payload для входа.' } satisfies ErrorResponse);
+    response.status(400).json({
+      message: 'Некорректный payload для входа.',
+    } satisfies ErrorResponse);
     return;
   }
 
@@ -49,6 +50,8 @@ export default async function handler(
     if (!result.sessionId) {
       throw new GrpcBackendError('Backend не вернул идентификатор сессии.', 502);
     }
+
+    const isAdmin = await detectAdminBySession(result.sessionId);
 
     response.setHeader(
       'Set-Cookie',
@@ -60,7 +63,12 @@ export default async function handler(
       }),
     );
 
-    response.status(200).json({ user: result.user });
+    response.status(200).json({
+      user: {
+        ...result.user,
+        isAdmin,
+      },
+    });
   } catch (error) {
     if (error instanceof GrpcBackendError) {
       response
@@ -69,8 +77,8 @@ export default async function handler(
       return;
     }
 
-    response
-      .status(500)
-      .json({ message: 'Внутренняя ошибка auth proxy.' } satisfies ErrorResponse);
+    response.status(500).json({
+      message: 'Внутренняя ошибка auth proxy.',
+    } satisfies ErrorResponse);
   }
 }

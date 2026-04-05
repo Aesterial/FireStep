@@ -3,6 +3,7 @@ import { Manrope, Space_Grotesk } from 'next/font/google';
 
 import '../styles/globals.css';
 
+import { AuthProvider } from '../contexts/AuthContext';
 import { ThemeProvider } from '../contexts/ThemeContext';
 
 const manrope = Manrope({
@@ -17,10 +18,12 @@ const spaceGrotesk = Space_Grotesk({
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider>
-      <div className={`${manrope.variable} ${spaceGrotesk.variable}`}>
-        <Component {...pageProps} />
-      </div>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <div className={`${manrope.variable} ${spaceGrotesk.variable}`}>
+          <Component {...pageProps} />
+        </div>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }

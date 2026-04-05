@@ -2,15 +2,16 @@ import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import { AnimatePresence, motion } from 'framer-motion';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { type FormEvent, useState } from 'react';
 
 import FireIcon from '../components/FireIcon';
 import Spinner from '../components/Spinner';
+import { useAuth } from '../contexts/AuthContext';
 import {
   authService,
   type LoginRequest,
   type RegisterRequest,
-  type UserInfo,
 } from '../contracts/auth';
 
 type AuthMode = 'login' | 'register';
@@ -36,7 +37,8 @@ export default function AuthPage() {
   const [pendingAction, setPendingAction] = useState<AuthMode | null>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [activeUser, setActiveUser] = useState<UserInfo | null>(null);
+  const router = useRouter();
+  const { setUser } = useAuth();
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -46,8 +48,9 @@ export default function AuthPage() {
 
     try {
       const response = await authService.login(loginData);
-      setActiveUser(response.user);
+      setUser(response.user);
       setSuccess(`Сессия открыта для ${response.user.username}.`);
+      await router.push(response.user.isAdmin ? '/admin' : '/stats');
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
@@ -67,8 +70,9 @@ export default function AuthPage() {
 
     try {
       const response = await authService.register(registerData);
-      setActiveUser(response.user);
+      setUser(response.user);
       setSuccess(`Аккаунт ${response.user.username} создан.`);
+      await router.push(response.user.isAdmin ? '/admin' : '/stats');
     } catch (caughtError) {
       setError(
         caughtError instanceof Error
@@ -341,12 +345,6 @@ export default function AuthPage() {
               )}
             </motion.div>
           </AnimatePresence>
-
-          {activeUser ? (
-            <div className='mt-6 rounded-[24px] border border-black/5 bg-white/55 px-4 py-3 text-sm text-stone-600 dark:border-white/10 dark:bg-white/5 dark:text-stone-300'>
-              Активный пользователь: <strong>{activeUser.username}</strong>
-            </div>
-          ) : null}
         </motion.div>
       </div>
     </>
