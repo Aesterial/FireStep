@@ -24,7 +24,8 @@ create table if not exists sessions (
 );
 
 create unique index if not exists sessions_idx on sessions (id);
-create unique index if not exists sessions_owner_idx on sessions (owner);
+drop index if exists sessions_owner_idx;
+create index if not exists sessions_owner_idx on sessions (owner);
 
 create table if not exists seance
 (
@@ -37,4 +38,4 @@ create table if not exists seance
 );
 
 create unique index if not exists seance_idx on seance (id);
-create unique index if not exists seance_owner_idx on seance (owner);
+create index if not exists seance_owner_idx on seance (owner);

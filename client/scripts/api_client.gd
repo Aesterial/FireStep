@@ -4,6 +4,8 @@ const SERVICE_ENDPOINT_SETTING := "firestep/network/api_endpoint"
 const AUTH_ENDPOINT_SETTING := "firestep/network/auth_endpoint"
 const SERVICE_ENDPOINT_ENV := "FIRESTEP_API_ENDPOINT"
 const AUTH_ENDPOINT_ENV := "FIRESTEP_AUTH_ENDPOINT"
+const DEFAULT_SERVICE_ENDPOINT := "http://127.0.0.1:8080"
+const DEFAULT_AUTH_ENDPOINT := "http://127.0.0.1:3000"
 const TOOL_PROJECT_PATH := "res://csharp-tool/Aesterial.FireStep.Client.Grpc.Tool.csproj"
 const TOOL_BINARY_PATH := "res://csharp-tool/bin/Debug/net8.0/Aesterial.FireStep.Client.Grpc.Tool.dll"
 
@@ -73,11 +75,11 @@ func open_auth_redirect() -> Dictionary:
 
 
 func get_service_endpoint() -> String:
-	return _read_endpoint(SERVICE_ENDPOINT_SETTING, SERVICE_ENDPOINT_ENV)
+	return _read_endpoint(SERVICE_ENDPOINT_SETTING, SERVICE_ENDPOINT_ENV, DEFAULT_SERVICE_ENDPOINT)
 
 
 func get_auth_redirect_url() -> String:
-	var auth_endpoint := _read_endpoint(AUTH_ENDPOINT_SETTING, AUTH_ENDPOINT_ENV)
+	var auth_endpoint := _read_endpoint(AUTH_ENDPOINT_SETTING, AUTH_ENDPOINT_ENV, DEFAULT_AUTH_ENDPOINT)
 	if auth_endpoint.is_empty():
 		return ""
 
@@ -149,10 +151,10 @@ func _config_error(message: String) -> Dictionary:
 	}
 
 
-func _read_endpoint(setting_path: String, env_name: String) -> String:
-	var value := str(ProjectSettings.get_setting(setting_path, ""))
+func _read_endpoint(setting_path: String, env_name: String, default_value: String) -> String:
+	var value := OS.get_environment(env_name)
 	if value.is_empty():
-		value = OS.get_environment(env_name)
+		value = str(ProjectSettings.get_setting(setting_path, default_value))
 	return value.strip_edges()
 
 

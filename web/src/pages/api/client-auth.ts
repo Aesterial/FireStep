@@ -6,6 +6,7 @@ import {
   GrpcBackendError,
   SESSION_COOKIE_NAME,
 } from '../../server/grpc/firestep';
+import { buildClientAuthDeepLink } from '../../lib/deep-links';
 
 interface ClientAuthResponse {
   session: string;
@@ -46,7 +47,7 @@ export default async function handler(
 
     response.status(200).json({
       session: clientSession,
-      deepLink: `firestep://token=${encodeURIComponent(clientSession)}`,
+      deepLink: buildClientAuthDeepLink(clientSession),
     });
   } catch (error) {
     if (error instanceof GrpcBackendError) {

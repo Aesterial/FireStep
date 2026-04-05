@@ -4,6 +4,7 @@ const UISkin = preload("res://scripts/ui_skin.gd")
 
 var click_player: AudioStreamPlayer
 var status_label: Label
+var token_input: LineEdit
 
 func _ready() -> void:
 	click_player = UISkin.make_click_player(self)
@@ -67,6 +68,35 @@ func _build_ui() -> void:
 	)
 	root.add_child(auth_button)
 
+	var manual_auth_box := VBoxContainer.new()
+	manual_auth_box.add_theme_constant_override("separation", 10)
+	root.add_child(manual_auth_box)
+
+	var manual_auth_hint := Label.new()
+	manual_auth_hint.text = "Если браузер не передал сессию, вставьте токен вручную."
+	manual_auth_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	manual_auth_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	UISkin.apply_body(manual_auth_hint, 14, Color(0.88, 0.93, 1.0))
+	manual_auth_box.add_child(manual_auth_hint)
+
+	token_input = LineEdit.new()
+	token_input.placeholder_text = "Вставьте session token"
+	token_input.custom_minimum_size = Vector2(0.0, 52.0)
+	token_input.text_submitted.connect(func(submitted_text: String) -> void:
+		_submit_manual_token(submitted_text)
+	)
+	manual_auth_box.add_child(token_input)
+
+	var token_button := Button.new()
+	token_button.text = "Войти по токену"
+	token_button.custom_minimum_size = Vector2(0.0, 52.0)
+	UISkin.apply_button(token_button, "blue")
+	_wire_click(token_button)
+	token_button.pressed.connect(func() -> void:
+		_submit_manual_token(token_input.text)
+	)
+	manual_auth_box.add_child(token_button)
+
 	root.add_child(UISkin.make_divider())
 
 	var config_hint := Label.new()
@@ -80,6 +110,9 @@ func _build_ui() -> void:
 func _try_restore_session() -> void:
 	# Проверяем аргументы командной строки на наличие токена (от кастомного URL scheme или аргумента --token)
 	var args := OS.get_cmdline_args()
+	var user_args := OS.get_cmdline_user_args()
+	for user_arg in user_args:
+		args.append(user_arg)
 	var token_from_args := ""
 	for arg in args:
 		if arg.begins_with("firestep://"):
@@ -97,12 +130,7 @@ func _try_restore_session() -> void:
 		_validate_and_apply_token(token_from_args)
 		return
 
-	GameSession.load_auth_state()
-	if GameSession.session_token.is_empty():
-		status_label.text = "Сохранённая сессия не найдена. Нажмите 'Авторизоваться'."
-		return
-
-	_validate_and_apply_token(GameSession.session_token)
+	status_label.text = "Сохранённая сессия не используется. Нажмите 'Авторизоваться' или вставьте токен вручную."
 
 
 func _validate_and_apply_token(token: String) -> void:
@@ -117,6 +145,15 @@ func _validate_and_apply_token(token: String) -> void:
 	GameSession.flush_pending_seance()
 	status_label.text = "Сессия подтверждена. Переходим к сценарию..."
 	get_tree().change_scene_to_file("res://scenes/Briefing.tscn")
+
+
+func _submit_manual_token(raw_token: String) -> void:
+	var token := raw_token.strip_edges()
+	if token.is_empty():
+		status_label.text = "Вставьте session token перед подтверждением."
+		return
+
+	_validate_and_apply_token(token)
 
 
 func _wire_click(button: BaseButton) -> void:

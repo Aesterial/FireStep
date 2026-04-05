@@ -535,7 +535,14 @@ export async function createClientSessionBySession(sessionId: string) {
     createAuthorizedMetadata(sessionId),
   );
 
-  return result.response.session ?? '';
+  const nextSessionId = result.response.session ?? '';
+  if (!nextSessionId) {
+    return '';
+  }
+
+  return nextSessionId.startsWith(SESSION_METADATA_PREFIX)
+    ? nextSessionId
+    : `${SESSION_METADATA_PREFIX}${nextSessionId}`;
 }
 
 export async function getUserInfoBySession(sessionId: string) {

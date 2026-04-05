@@ -32,7 +32,7 @@ var user_profile: Dictionary = {}
 
 func _ready() -> void:
 	_ensure_actions()
-	load_auth_state()
+	clear_authenticated_session()
 
 
 func _input(event: InputEvent) -> void:
@@ -182,43 +182,21 @@ func apply_authenticated_session(token: String, profile: Dictionary) -> void:
 	session_token = token.strip_edges()
 	session_verified = not session_token.is_empty()
 	user_profile = profile.duplicate(true)
-	save_auth_state()
 
 
 func clear_authenticated_session() -> void:
 	session_token = ""
 	session_verified = false
 	user_profile = {}
-	save_auth_state()
+	_clear_auth_state_file()
 
 
 func load_auth_state() -> void:
-	if not FileAccess.file_exists(SESSION_STATE_PATH):
-		return
-
-	var file := FileAccess.open(SESSION_STATE_PATH, FileAccess.READ)
-	if file == null:
-		return
-
-	var parsed = JSON.parse_string(file.get_as_text())
-	if typeof(parsed) != TYPE_DICTIONARY:
-		return
-
-	session_token = str(parsed.get("sessionToken", ""))
-	session_verified = not session_token.is_empty()
-	var profile = parsed.get("user", {})
-	user_profile = profile.duplicate(true) if typeof(profile) == TYPE_DICTIONARY else {}
+	clear_authenticated_session()
 
 
 func save_auth_state() -> void:
-	var file := FileAccess.open(SESSION_STATE_PATH, FileAccess.WRITE)
-	if file == null:
-		return
-
-	file.store_string(JSON.stringify({
-		"sessionToken": session_token,
-		"user": user_profile,
-	}))
+	_clear_auth_state_file()
 
 
 func record_action(action_name: String) -> void:
@@ -300,6 +278,11 @@ func _persist_pending_seance(finalized: bool) -> void:
 func _clear_pending_seance_file() -> void:
 	if FileAccess.file_exists(PENDING_SEANCE_PATH):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(PENDING_SEANCE_PATH))
+
+
+func _clear_auth_state_file() -> void:
+	if FileAccess.file_exists(SESSION_STATE_PATH):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(SESSION_STATE_PATH))
 
 
 func _now_unix_msec() -> int:

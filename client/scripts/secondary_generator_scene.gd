@@ -7,9 +7,9 @@ const CEILING_TEXTURE: Texture2D = preload("res://assets/textures/prototype/dark
 const DETAIL_TANK_SCENE: PackedScene = preload("res://assets/models/detail-tank.glb")
 const CHIMNEY_SMALL_SCENE: PackedScene = preload("res://assets/models/chimney-small.glb")
 
-@onready var world_environment: WorldEnvironment = 
-@onready var player: CharacterBody3D = 
-@onready var hud: CanvasLayer = 
+@onready var world_environment: WorldEnvironment = $WorldEnvironment
+@onready var player: CharacterBody3D = $Player
+@onready var hud: CanvasLayer = $HUD
 
 var generator_disabled: bool = false
 var generator_body_material: StandardMaterial3D
