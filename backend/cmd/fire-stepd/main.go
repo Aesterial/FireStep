@@ -53,7 +53,7 @@ func main() {
 	statsService := statsservice.NewStatsService(statsRepository, seanceService, userService)
 	loginService := loginservice.NewLoginService(userService, sessionService)
 	auth := handlers.NewAuthentificator(sessionService, userService)
-	loginHandler := handlers.NewLoginHandler(loginService, auth)
+	loginHandler := handlers.NewLoginHandler(loginService, sessionService, auth)
 	userHandler := handlers.NewUserHandler(userService, auth)
 	sessionHandler := handlers.NewSessionsHandler(sessionService, auth)
 	seanceHandler := handlers.NewSeanceHandler(seanceService, auth)

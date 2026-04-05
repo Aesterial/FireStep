@@ -41,21 +41,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          "${GODOT_BINARY}" --headless --path . --import
+          "${GODOT_BINARY}" --headless --path client --import
 
       - name: Run headless smoke check
         shell: bash
         run: |
           set -euo pipefail
-          "${GODOT_BINARY}" --headless --path . --quit-after 1
+          "${GODOT_BINARY}" --headless --path client --quit-after 1
 
       - name: Verify repository docs
         shell: bash
         run: |
           set -euo pipefail
           test -f README.md
-          test -f docs/TEST_PLAN.md
-          test -f docs/ASSETS.md
+          test -f client/docs/TEST_PLAN.md
+          test -f client/docs/ASSETS.md
 
   backend:
     name: Backend Go Check
