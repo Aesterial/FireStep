@@ -183,7 +183,8 @@ export default function Navbar() {
                           >
                               Открыть аккаунт
                           </Link>
-                </div>
+                      </div>
+                  </motion.div>
               </Dialog.Panel>
             </div>
           </Dialog>

@@ -199,7 +199,7 @@ let sessionsClient: SessionsServiceClient | null = null;
 let seancesClient: SeancesServiceClient | null = null;
 
 function getBackendAddress() {
-  return process.env.FIRESTEP_GRPC_ADDR ?? '127.0.0.1:50051';
+  return process.env.FIRESTEP_GRPC_ADDR ?? '127.0.0.1:8080';
 }
 
 function loadServicePackage<TPackage>(
