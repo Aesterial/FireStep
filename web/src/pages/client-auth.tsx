@@ -65,12 +65,6 @@ export default function ClientAuthPage() {
           <h1 className='font-display text-3xl font-semibold text-stone-950 dark:text-stone-50'>
             Client Auth
           </h1>
-
-          <p className='mt-4 text-sm leading-7 text-stone-600 dark:text-stone-300'>
-            Нажми кнопку, получи session от backend и открой клиент по схеме
-            `firestep://token=...`
-          </p>
-
           {error ? (
             <div className='mt-6 rounded-[24px] border border-red-500/18 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300'>
               {error}
