@@ -26,27 +26,31 @@ var File_xyz_fire_step_v1_login_service_proto protoreflect.FileDescriptor
 
 const file_xyz_fire_step_v1_login_service_proto_rawDesc = "" +
 	"\n" +
-	"$xyz/fire-step/v1/login/service.proto\x12\x16xyz.fire_step.v1.login\x1a#xyz/fire-step/v1/login/domain.proto\x1a\"xyz/fire-step/v1/user/domain.proto\x1a\x1bgoogle/protobuf/empty.proto2\xe6\x01\n" +
+	"$xyz/fire-step/v1/login/service.proto\x12\x16xyz.fire_step.v1.login\x1a#xyz/fire-step/v1/login/domain.proto\x1a\"xyz/fire-step/v1/user/domain.proto\x1a\x1bgoogle/protobuf/empty.proto2\xb5\x02\n" +
 	"\fLoginService\x12P\n" +
 	"\bRegister\x12'.xyz.fire_step.v1.login.RegisterRequest\x1a\x1b.xyz.fire_step.v1.user.User\x12J\n" +
 	"\x05Login\x12$.xyz.fire_step.v1.login.LoginRequest\x1a\x1b.xyz.fire_step.v1.user.User\x128\n" +
-	"\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.EmptyBtZPgithub.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/login;login\xaa\x02\x1fAesterial.FireStep.Api.V1.Loginb\x06proto3"
+	"\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\x12M\n" +
+	"\x06Device\x12\x16.google.protobuf.Empty\x1a+.xyz.fire_step.v1.login.DeviceLoginResponseBtZPgithub.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/login;login\xaa\x02\x1fAesterial.FireStep.Api.V1.Loginb\x06proto3"
 
 var file_xyz_fire_step_v1_login_service_proto_goTypes = []any{
-	(*RegisterRequest)(nil), // 0: xyz.fire_step.v1.login.RegisterRequest
-	(*LoginRequest)(nil),    // 1: xyz.fire_step.v1.login.LoginRequest
-	(*emptypb.Empty)(nil),   // 2: google.protobuf.Empty
-	(*user.User)(nil),       // 3: xyz.fire_step.v1.user.User
+	(*RegisterRequest)(nil),     // 0: xyz.fire_step.v1.login.RegisterRequest
+	(*LoginRequest)(nil),        // 1: xyz.fire_step.v1.login.LoginRequest
+	(*emptypb.Empty)(nil),       // 2: google.protobuf.Empty
+	(*user.User)(nil),           // 3: xyz.fire_step.v1.user.User
+	(*DeviceLoginResponse)(nil), // 4: xyz.fire_step.v1.login.DeviceLoginResponse
 }
 var file_xyz_fire_step_v1_login_service_proto_depIdxs = []int32{
 	0, // 0: xyz.fire_step.v1.login.LoginService.Register:input_type -> xyz.fire_step.v1.login.RegisterRequest
 	1, // 1: xyz.fire_step.v1.login.LoginService.Login:input_type -> xyz.fire_step.v1.login.LoginRequest
 	2, // 2: xyz.fire_step.v1.login.LoginService.Logout:input_type -> google.protobuf.Empty
-	3, // 3: xyz.fire_step.v1.login.LoginService.Register:output_type -> xyz.fire_step.v1.user.User
-	3, // 4: xyz.fire_step.v1.login.LoginService.Login:output_type -> xyz.fire_step.v1.user.User
-	2, // 5: xyz.fire_step.v1.login.LoginService.Logout:output_type -> google.protobuf.Empty
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	2, // 3: xyz.fire_step.v1.login.LoginService.Device:input_type -> google.protobuf.Empty
+	3, // 4: xyz.fire_step.v1.login.LoginService.Register:output_type -> xyz.fire_step.v1.user.User
+	3, // 5: xyz.fire_step.v1.login.LoginService.Login:output_type -> xyz.fire_step.v1.user.User
+	2, // 6: xyz.fire_step.v1.login.LoginService.Logout:output_type -> google.protobuf.Empty
+	4, // 7: xyz.fire_step.v1.login.LoginService.Device:output_type -> xyz.fire_step.v1.login.DeviceLoginResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

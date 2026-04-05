@@ -22,5 +22,8 @@ message LoginRequest {
 
 message LoginResponse {
   xyz.fire_step.v1.user.User info = 1;
-  string session = 2;
+}
+
+message DeviceLoginResponse {
+  string session = 1;
 }

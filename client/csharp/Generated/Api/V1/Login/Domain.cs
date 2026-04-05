@@ -30,18 +30,20 @@ namespace Aesterial.FireStep.Api.V1.Login {
             "Ugh1c2VybmFtZRIUCgVlbWFpbBgCIAEoCVIFZW1haWwSGgoIcGFzc3dvcmQY",
             "AyABKAlSCHBhc3N3b3JkEhoKCGluaXRpYWxzGAQgASgJUghpbml0aWFscxIQ",
             "CgNvcmcYBSABKAlSA29yZyJGCgxMb2dpblJlcXVlc3QSGgoIdXNlcm5hbWUY",
-            "ASABKAlSCHVzZXJuYW1lEhoKCHBhc3N3b3JkGAIgASgJUghwYXNzd29yZCJa",
+            "ASABKAlSCHVzZXJuYW1lEhoKCHBhc3N3b3JkGAIgASgJUghwYXNzd29yZCJA",
             "Cg1Mb2dpblJlc3BvbnNlEi8KBGluZm8YASABKAsyGy54eXouZmlyZV9zdGVw",
-            "LnYxLnVzZXIuVXNlclIEaW5mbxIYCgdzZXNzaW9uGAIgASgJUgdzZXNzaW9u",
-            "QnRaUGdpdGh1Yi5jb20vYWVzdGVyaWFsL2ZpcmUtc3RlcC9iYWNrZW5kL2lu",
-            "dGVybmFsL2FwaS94eXovZmlyZS1zdGVwL3YxL2xvZ2luO2xvZ2luqgIfQWVz",
-            "dGVyaWFsLkZpcmVTdGVwLkFwaS5WMS5Mb2dpbmIGcHJvdG8z"));
+            "LnYxLnVzZXIuVXNlclIEaW5mbyIvChNEZXZpY2VMb2dpblJlc3BvbnNlEhgK",
+            "B3Nlc3Npb24YASABKAlSB3Nlc3Npb25CdFpQZ2l0aHViLmNvbS9hZXN0ZXJp",
+            "YWwvZmlyZS1zdGVwL2JhY2tlbmQvaW50ZXJuYWwvYXBpL3h5ei9maXJlLXN0",
+            "ZXAvdjEvbG9naW47bG9naW6qAh9BZXN0ZXJpYWwuRmlyZVN0ZXAuQXBpLlYx",
+            "LkxvZ2luYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Aesterial.FireStep.Api.V1.User.DomainReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Aesterial.FireStep.Api.V1.Login.RegisterRequest), global::Aesterial.FireStep.Api.V1.Login.RegisterRequest.Parser, new[]{ "Username", "Email", "Password", "Initials", "Org" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Aesterial.FireStep.Api.V1.Login.LoginRequest), global::Aesterial.FireStep.Api.V1.Login.LoginRequest.Parser, new[]{ "Username", "Password" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Aesterial.FireStep.Api.V1.Login.LoginResponse), global::Aesterial.FireStep.Api.V1.Login.LoginResponse.Parser, new[]{ "Info", "Session" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Aesterial.FireStep.Api.V1.Login.LoginResponse), global::Aesterial.FireStep.Api.V1.Login.LoginResponse.Parser, new[]{ "Info" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse), global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse.Parser, new[]{ "Session" }, null, null, null, null)
           }));
     }
     #endregion
@@ -665,7 +667,6 @@ namespace Aesterial.FireStep.Api.V1.Login {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public LoginResponse(LoginResponse other) : this() {
       info_ = other.info_ != null ? other.info_.Clone() : null;
-      session_ = other.session_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -687,18 +688,6 @@ namespace Aesterial.FireStep.Api.V1.Login {
       }
     }
 
-    /// <summary>Field number for the "session" field.</summary>
-    public const int SessionFieldNumber = 2;
-    private string session_ = "";
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Session {
-      get { return session_; }
-      set {
-        session_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
-      }
-    }
-
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -715,7 +704,6 @@ namespace Aesterial.FireStep.Api.V1.Login {
         return true;
       }
       if (!object.Equals(Info, other.Info)) return false;
-      if (Session != other.Session) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -724,7 +712,6 @@ namespace Aesterial.FireStep.Api.V1.Login {
     public override int GetHashCode() {
       int hash = 1;
       if (info_ != null) hash ^= Info.GetHashCode();
-      if (Session.Length != 0) hash ^= Session.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -747,10 +734,6 @@ namespace Aesterial.FireStep.Api.V1.Login {
         output.WriteRawTag(10);
         output.WriteMessage(Info);
       }
-      if (Session.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(Session);
-      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -765,10 +748,6 @@ namespace Aesterial.FireStep.Api.V1.Login {
         output.WriteRawTag(10);
         output.WriteMessage(Info);
       }
-      if (Session.Length != 0) {
-        output.WriteRawTag(18);
-        output.WriteString(Session);
-      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -781,9 +760,6 @@ namespace Aesterial.FireStep.Api.V1.Login {
       int size = 0;
       if (info_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Info);
-      }
-      if (Session.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Session);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -802,9 +778,6 @@ namespace Aesterial.FireStep.Api.V1.Login {
           Info = new global::Aesterial.FireStep.Api.V1.User.User();
         }
         Info.MergeFrom(other.Info);
-      }
-      if (other.Session.Length != 0) {
-        Session = other.Session;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -830,10 +803,6 @@ namespace Aesterial.FireStep.Api.V1.Login {
               Info = new global::Aesterial.FireStep.Api.V1.User.User();
             }
             input.ReadMessage(Info);
-            break;
-          }
-          case 18: {
-            Session = input.ReadString();
             break;
           }
         }
@@ -862,7 +831,201 @@ namespace Aesterial.FireStep.Api.V1.Login {
             input.ReadMessage(Info);
             break;
           }
-          case 18: {
+        }
+      }
+    }
+    #endif
+
+  }
+
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class DeviceLoginResponse : pb::IMessage<DeviceLoginResponse>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<DeviceLoginResponse> _parser = new pb::MessageParser<DeviceLoginResponse>(() => new DeviceLoginResponse());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<DeviceLoginResponse> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Aesterial.FireStep.Api.V1.Login.DomainReflection.Descriptor.MessageTypes[3]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DeviceLoginResponse() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DeviceLoginResponse(DeviceLoginResponse other) : this() {
+      session_ = other.session_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DeviceLoginResponse Clone() {
+      return new DeviceLoginResponse(this);
+    }
+
+    /// <summary>Field number for the "session" field.</summary>
+    public const int SessionFieldNumber = 1;
+    private string session_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Session {
+      get { return session_; }
+      set {
+        session_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as DeviceLoginResponse);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(DeviceLoginResponse other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Session != other.Session) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Session.Length != 0) hash ^= Session.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Session.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Session);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Session.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Session);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Session.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Session);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(DeviceLoginResponse other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Session.Length != 0) {
+        Session = other.Session;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Session = input.ReadString();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
             Session = input.ReadString();
             break;
           }

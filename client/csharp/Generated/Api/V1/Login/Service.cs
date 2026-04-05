@@ -27,15 +27,17 @@ namespace Aesterial.FireStep.Api.V1.Login {
             "CiR4eXovZmlyZS1zdGVwL3YxL2xvZ2luL3NlcnZpY2UucHJvdG8SFnh5ei5m",
             "aXJlX3N0ZXAudjEubG9naW4aI3h5ei9maXJlLXN0ZXAvdjEvbG9naW4vZG9t",
             "YWluLnByb3RvGiJ4eXovZmlyZS1zdGVwL3YxL3VzZXIvZG9tYWluLnByb3Rv",
-            "Ghtnb29nbGUvcHJvdG9idWYvZW1wdHkucHJvdG8y5gEKDExvZ2luU2Vydmlj",
+            "Ghtnb29nbGUvcHJvdG9idWYvZW1wdHkucHJvdG8ytQIKDExvZ2luU2Vydmlj",
             "ZRJQCghSZWdpc3RlchInLnh5ei5maXJlX3N0ZXAudjEubG9naW4uUmVnaXN0",
             "ZXJSZXF1ZXN0GhsueHl6LmZpcmVfc3RlcC52MS51c2VyLlVzZXISSgoFTG9n",
             "aW4SJC54eXouZmlyZV9zdGVwLnYxLmxvZ2luLkxvZ2luUmVxdWVzdBobLnh5",
             "ei5maXJlX3N0ZXAudjEudXNlci5Vc2VyEjgKBkxvZ291dBIWLmdvb2dsZS5w",
-            "cm90b2J1Zi5FbXB0eRoWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eUJ0WlBnaXRo",
-            "dWIuY29tL2Flc3RlcmlhbC9maXJlLXN0ZXAvYmFja2VuZC9pbnRlcm5hbC9h",
-            "cGkveHl6L2ZpcmUtc3RlcC92MS9sb2dpbjtsb2dpbqoCH0Flc3RlcmlhbC5G",
-            "aXJlU3RlcC5BcGkuVjEuTG9naW5iBnByb3RvMw=="));
+            "cm90b2J1Zi5FbXB0eRoWLmdvb2dsZS5wcm90b2J1Zi5FbXB0eRJNCgZEZXZp",
+            "Y2USFi5nb29nbGUucHJvdG9idWYuRW1wdHkaKy54eXouZmlyZV9zdGVwLnYx",
+            "LmxvZ2luLkRldmljZUxvZ2luUmVzcG9uc2VCdFpQZ2l0aHViLmNvbS9hZXN0",
+            "ZXJpYWwvZmlyZS1zdGVwL2JhY2tlbmQvaW50ZXJuYWwvYXBpL3h5ei9maXJl",
+            "LXN0ZXAvdjEvbG9naW47bG9naW6qAh9BZXN0ZXJpYWwuRmlyZVN0ZXAuQXBp",
+            "LlYxLkxvZ2luYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Aesterial.FireStep.Api.V1.Login.DomainReflection.Descriptor, global::Aesterial.FireStep.Api.V1.User.DomainReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.EmptyReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, null));

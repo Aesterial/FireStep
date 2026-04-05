@@ -24,6 +24,7 @@ const (
 	LoginService_Register_FullMethodName = "/xyz.fire_step.v1.login.LoginService/Register"
 	LoginService_Login_FullMethodName    = "/xyz.fire_step.v1.login.LoginService/Login"
 	LoginService_Logout_FullMethodName   = "/xyz.fire_step.v1.login.LoginService/Logout"
+	LoginService_Device_FullMethodName   = "/xyz.fire_step.v1.login.LoginService/Device"
 )
 
 // LoginServiceClient is the client API for LoginService service.
@@ -33,6 +34,7 @@ type LoginServiceClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*user.User, error)
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*user.User, error)
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Device(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DeviceLoginResponse, error)
 }
 
 type loginServiceClient struct {
@@ -73,6 +75,16 @@ func (c *loginServiceClient) Logout(ctx context.Context, in *emptypb.Empty, opts
 	return out, nil
 }
 
+func (c *loginServiceClient) Device(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*DeviceLoginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeviceLoginResponse)
+	err := c.cc.Invoke(ctx, LoginService_Device_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LoginServiceServer is the server API for LoginService service.
 // All implementations should embed UnimplementedLoginServiceServer
 // for forward compatibility.
@@ -80,6 +92,7 @@ type LoginServiceServer interface {
 	Register(context.Context, *RegisterRequest) (*user.User, error)
 	Login(context.Context, *LoginRequest) (*user.User, error)
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
+	Device(context.Context, *emptypb.Empty) (*DeviceLoginResponse, error)
 }
 
 // UnimplementedLoginServiceServer should be embedded to have
@@ -97,6 +110,9 @@ func (UnimplementedLoginServiceServer) Login(context.Context, *LoginRequest) (*u
 }
 func (UnimplementedLoginServiceServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
+}
+func (UnimplementedLoginServiceServer) Device(context.Context, *emptypb.Empty) (*DeviceLoginResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Device not implemented")
 }
 func (UnimplementedLoginServiceServer) testEmbeddedByValue() {}
 
@@ -172,6 +188,24 @@ func _LoginService_Logout_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LoginService_Device_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LoginServiceServer).Device(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LoginService_Device_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LoginServiceServer).Device(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LoginService_ServiceDesc is the grpc.ServiceDesc for LoginService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var LoginService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Logout",
 			Handler:    _LoginService_Logout_Handler,
+		},
+		{
+			MethodName: "Device",
+			Handler:    _LoginService_Device_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

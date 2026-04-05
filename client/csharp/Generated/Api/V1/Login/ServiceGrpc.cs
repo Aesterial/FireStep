@@ -53,6 +53,8 @@ namespace Aesterial.FireStep.Api.V1.Login {
     static readonly grpc::Marshaller<global::Aesterial.FireStep.Api.V1.Login.LoginRequest> __Marshaller_xyz_fire_step_v1_login_LoginRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Aesterial.FireStep.Api.V1.Login.LoginRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Marshaller<global::Google.Protobuf.WellKnownTypes.Empty> __Marshaller_google_protobuf_Empty = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Google.Protobuf.WellKnownTypes.Empty.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse> __Marshaller_xyz_fire_step_v1_login_DeviceLoginResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     static readonly grpc::Method<global::Aesterial.FireStep.Api.V1.Login.RegisterRequest, global::Aesterial.FireStep.Api.V1.User.User> __Method_Register = new grpc::Method<global::Aesterial.FireStep.Api.V1.Login.RegisterRequest, global::Aesterial.FireStep.Api.V1.User.User>(
@@ -78,6 +80,14 @@ namespace Aesterial.FireStep.Api.V1.Login {
         __Marshaller_google_protobuf_Empty,
         __Marshaller_google_protobuf_Empty);
 
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Google.Protobuf.WellKnownTypes.Empty, global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse> __Method_Device = new grpc::Method<global::Google.Protobuf.WellKnownTypes.Empty, global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "Device",
+        __Marshaller_google_protobuf_Empty,
+        __Marshaller_xyz_fire_step_v1_login_DeviceLoginResponse);
+
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
     {
@@ -102,6 +112,12 @@ namespace Aesterial.FireStep.Api.V1.Login {
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       public virtual global::System.Threading.Tasks.Task<global::Google.Protobuf.WellKnownTypes.Empty> Logout(global::Google.Protobuf.WellKnownTypes.Empty request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::System.Threading.Tasks.Task<global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse> Device(global::Google.Protobuf.WellKnownTypes.Empty request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -195,6 +211,26 @@ namespace Aesterial.FireStep.Api.V1.Login {
       {
         return CallInvoker.AsyncUnaryCall(__Method_Logout, null, options, request);
       }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse Device(global::Google.Protobuf.WellKnownTypes.Empty request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return Device(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse Device(global::Google.Protobuf.WellKnownTypes.Empty request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_Device, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse> DeviceAsync(global::Google.Protobuf.WellKnownTypes.Empty request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return DeviceAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncUnaryCall<global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse> DeviceAsync(global::Google.Protobuf.WellKnownTypes.Empty request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_Device, null, options, request);
+      }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
       protected override LoginServiceClient NewInstance(ClientBaseConfiguration configuration)
@@ -211,7 +247,8 @@ namespace Aesterial.FireStep.Api.V1.Login {
       return grpc::ServerServiceDefinition.CreateBuilder()
           .AddMethod(__Method_Register, serviceImpl.Register)
           .AddMethod(__Method_Login, serviceImpl.Login)
-          .AddMethod(__Method_Logout, serviceImpl.Logout).Build();
+          .AddMethod(__Method_Logout, serviceImpl.Logout)
+          .AddMethod(__Method_Device, serviceImpl.Device).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the service binding logic.
@@ -224,6 +261,7 @@ namespace Aesterial.FireStep.Api.V1.Login {
       serviceBinder.AddMethod(__Method_Register, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Aesterial.FireStep.Api.V1.Login.RegisterRequest, global::Aesterial.FireStep.Api.V1.User.User>(serviceImpl.Register));
       serviceBinder.AddMethod(__Method_Login, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Aesterial.FireStep.Api.V1.Login.LoginRequest, global::Aesterial.FireStep.Api.V1.User.User>(serviceImpl.Login));
       serviceBinder.AddMethod(__Method_Logout, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Google.Protobuf.WellKnownTypes.Empty, global::Google.Protobuf.WellKnownTypes.Empty>(serviceImpl.Logout));
+      serviceBinder.AddMethod(__Method_Device, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Google.Protobuf.WellKnownTypes.Empty, global::Aesterial.FireStep.Api.V1.Login.DeviceLoginResponse>(serviceImpl.Device));
     }
 
   }

@@ -153,7 +153,6 @@ func (x *LoginRequest) GetPassword() string {
 type LoginResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Info          *user.User             `protobuf:"bytes,1,opt,name=info,proto3" json:"info,omitempty"`
-	Session       string                 `protobuf:"bytes,2,opt,name=session,proto3" json:"session,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -195,7 +194,44 @@ func (x *LoginResponse) GetInfo() *user.User {
 	return nil
 }
 
-func (x *LoginResponse) GetSession() string {
+type DeviceLoginResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Session       string                 `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeviceLoginResponse) Reset() {
+	*x = DeviceLoginResponse{}
+	mi := &file_xyz_fire_step_v1_login_domain_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeviceLoginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeviceLoginResponse) ProtoMessage() {}
+
+func (x *DeviceLoginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_xyz_fire_step_v1_login_domain_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeviceLoginResponse.ProtoReflect.Descriptor instead.
+func (*DeviceLoginResponse) Descriptor() ([]byte, []int) {
+	return file_xyz_fire_step_v1_login_domain_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *DeviceLoginResponse) GetSession() string {
 	if x != nil {
 		return x.Session
 	}
@@ -215,10 +251,11 @@ const file_xyz_fire_step_v1_login_domain_proto_rawDesc = "" +
 	"\x03org\x18\x05 \x01(\tR\x03org\"F\n" +
 	"\fLoginRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\"Z\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"@\n" +
 	"\rLoginResponse\x12/\n" +
-	"\x04info\x18\x01 \x01(\v2\x1b.xyz.fire_step.v1.user.UserR\x04info\x12\x18\n" +
-	"\asession\x18\x02 \x01(\tR\asessionBtZPgithub.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/login;login\xaa\x02\x1fAesterial.FireStep.Api.V1.Loginb\x06proto3"
+	"\x04info\x18\x01 \x01(\v2\x1b.xyz.fire_step.v1.user.UserR\x04info\"/\n" +
+	"\x13DeviceLoginResponse\x12\x18\n" +
+	"\asession\x18\x01 \x01(\tR\asessionBtZPgithub.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/login;login\xaa\x02\x1fAesterial.FireStep.Api.V1.Loginb\x06proto3"
 
 var (
 	file_xyz_fire_step_v1_login_domain_proto_rawDescOnce sync.Once
@@ -232,15 +269,16 @@ func file_xyz_fire_step_v1_login_domain_proto_rawDescGZIP() []byte {
 	return file_xyz_fire_step_v1_login_domain_proto_rawDescData
 }
 
-var file_xyz_fire_step_v1_login_domain_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_xyz_fire_step_v1_login_domain_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_xyz_fire_step_v1_login_domain_proto_goTypes = []any{
-	(*RegisterRequest)(nil), // 0: xyz.fire_step.v1.login.RegisterRequest
-	(*LoginRequest)(nil),    // 1: xyz.fire_step.v1.login.LoginRequest
-	(*LoginResponse)(nil),   // 2: xyz.fire_step.v1.login.LoginResponse
-	(*user.User)(nil),       // 3: xyz.fire_step.v1.user.User
+	(*RegisterRequest)(nil),     // 0: xyz.fire_step.v1.login.RegisterRequest
+	(*LoginRequest)(nil),        // 1: xyz.fire_step.v1.login.LoginRequest
+	(*LoginResponse)(nil),       // 2: xyz.fire_step.v1.login.LoginResponse
+	(*DeviceLoginResponse)(nil), // 3: xyz.fire_step.v1.login.DeviceLoginResponse
+	(*user.User)(nil),           // 4: xyz.fire_step.v1.user.User
 }
 var file_xyz_fire_step_v1_login_domain_proto_depIdxs = []int32{
-	3, // 0: xyz.fire_step.v1.login.LoginResponse.info:type_name -> xyz.fire_step.v1.user.User
+	4, // 0: xyz.fire_step.v1.login.LoginResponse.info:type_name -> xyz.fire_step.v1.user.User
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -259,7 +297,7 @@ func file_xyz_fire_step_v1_login_domain_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_xyz_fire_step_v1_login_domain_proto_rawDesc), len(file_xyz_fire_step_v1_login_domain_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

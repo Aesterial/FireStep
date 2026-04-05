@@ -13,4 +13,5 @@ service LoginService {
   rpc Register(RegisterRequest) returns (xyz.fire_step.v1.user.User);
   rpc Login(LoginRequest) returns (xyz.fire_step.v1.user.User);
   rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty);
+  rpc Device(google.protobuf.Empty) returns (DeviceLoginResponse);
 }
