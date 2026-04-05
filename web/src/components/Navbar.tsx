@@ -116,7 +116,7 @@ export default function Navbar() {
                     <div className='hidden sm:block'>
                       <Menu as='div' className='relative'>
                         <Menu.Button className='inline-flex items-center gap-2 rounded-full bg-stone-950 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-stone-800 dark:bg-stone-50 dark:text-stone-950 dark:hover:bg-white'>
-                          <span>{user.username}</span>
+                          <span>{`Аккаунт · ${user.username}`}</span>
                           <ChevronDownIcon className='h-4 w-4' />
                         </Menu.Button>
 

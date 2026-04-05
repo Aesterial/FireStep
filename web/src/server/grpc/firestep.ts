@@ -102,6 +102,11 @@ interface LoginServiceClient {
     metadata: Metadata,
     callback: UnaryCallback<Record<string, never>>,
   ): ClientUnaryCall;
+  Device(
+    request: Record<string, never>,
+    metadata: Metadata,
+    callback: UnaryCallback<{ session?: string }>,
+  ): ClientUnaryCall;
 }
 
 interface UserServiceClient {
@@ -521,6 +526,16 @@ export async function logoutWithBackend(sessionId: string) {
     {},
     createAuthorizedMetadata(sessionId),
   );
+}
+
+export async function createClientSessionBySession(sessionId: string) {
+  const result = await invokeUnary(
+    getLoginClient().Device.bind(getLoginClient()),
+    {},
+    createAuthorizedMetadata(sessionId),
+  );
+
+  return result.response.session ?? '';
 }
 
 export async function getUserInfoBySession(sessionId: string) {

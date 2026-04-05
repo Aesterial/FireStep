@@ -1,6 +1,7 @@
 import {
   createContext,
   type ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -8,6 +9,8 @@ import {
 
 import type { CurrentUser } from '../contracts/app';
 import { authService } from '../contracts/auth';
+
+const USER_STORAGE_KEY = 'firestep-current-user';
 
 interface AuthContextType {
   user: CurrentUser | null;
@@ -37,35 +40,73 @@ async function fetchCurrentUser() {
   return (await response.json()) as CurrentUser;
 }
 
+function readStoredUser() {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(USER_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as CurrentUser) : null;
+  } catch {
+    return null;
+  }
+}
+
+function persistUser(nextUser: CurrentUser | null) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  if (!nextUser) {
+    window.localStorage.removeItem(USER_STORAGE_KEY);
+    return;
+  }
+
+  window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(nextUser));
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<CurrentUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const refresh = async () => {
+  const applyUser = (nextUser: CurrentUser | null) => {
+    setUser(nextUser);
+    persistUser(nextUser);
+  };
+
+  const refresh = useCallback(async () => {
     try {
       const nextUser = await fetchCurrentUser();
-      setUser(nextUser);
+      applyUser(nextUser);
       return nextUser;
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const logout = async () => {
     await authService.logout();
-    setUser(null);
+    applyUser(null);
   };
 
   useEffect(() => {
+    const storedUser = readStoredUser();
+
+    if (storedUser) {
+      setUser(storedUser);
+      setIsLoading(false);
+    }
+
     void refresh();
-  }, []);
+  }, [refresh]);
 
   return (
     <AuthContext.Provider
       value={{
         user,
         isLoading,
-        setUser,
+        setUser: applyUser,
         refresh,
         logout,
       }}
