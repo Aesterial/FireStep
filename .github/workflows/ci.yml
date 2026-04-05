@@ -82,11 +82,11 @@ jobs:
         run: go test -v ./...
 
   frontend:
-    name: Frontend Vite Check
+    name: Frontend Next.js Check
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: frontend
+        working-directory: web
     steps:
       - uses: actions/checkout@v4
 
@@ -94,11 +94,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
 
       - name: Install dependencies
         run: npm ci || npm install
 
-      - name: Run Build (Vite)
+      - name: Run Build
         run: npm run build
 
       - name: Run Tests

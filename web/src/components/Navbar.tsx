@@ -235,97 +235,98 @@ export default function Navbar() {
             />
 
             <div className='fixed inset-0 flex justify-end p-3'>
-              <Dialog.Panel
-                as={motion.div}
+              <motion.div
                 initial={{ opacity: 0, x: 24 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 16 }}
                 transition={{ duration: 0.22 }}
-                className='glass-panel flex w-full max-w-xs flex-col rounded-[32px] p-5'
+                className='w-full max-w-xs'
               >
-                <div className='flex items-center justify-between'>
-                  <Link
-                    href='/'
-                    className='flex items-center gap-3'
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <FireIcon />
-                    <span className='font-display text-lg font-semibold text-stone-950 dark:text-white'>
-                      FireStep
-                    </span>
-                  </Link>
-
-                  <button
-                    onClick={() => setMobileMenuOpen(false)}
-                    className='rounded-full p-2 text-stone-600 dark:text-stone-300'
-                    type='button'
-                    aria-label='Закрыть меню'
-                  >
-                    <XMarkIcon className='h-5 w-5' />
-                  </button>
-                </div>
-
-                <div className='mt-8 space-y-2'>
-                  {navItems.map((item) => (
-                    <a
-                      key={item.href}
-                      href={item.href}
+                <Dialog.Panel className='glass-panel flex flex-col rounded-[32px] p-5'>
+                  <div className='flex items-center justify-between'>
+                    <Link
+                      href='/'
+                      className='flex items-center gap-3'
                       onClick={() => setMobileMenuOpen(false)}
-                      className='block rounded-2xl px-4 py-3 text-base font-semibold text-stone-900 transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/5'
                     >
-                      {item.label}
-                    </a>
-                  ))}
+                      <FireIcon />
+                      <span className='font-display text-lg font-semibold text-stone-950 dark:text-white'>
+                        FireStep
+                      </span>
+                    </Link>
 
-                  {user ? (
-                    <>
-                      <div className='rounded-2xl px-4 py-3 text-sm text-stone-500 dark:text-stone-400'>
-                        {`Аккаунт · ${user.username}`}
-                      </div>
-                      <Link
-                        href={statsHref}
+                    <button
+                      onClick={() => setMobileMenuOpen(false)}
+                      className='rounded-full p-2 text-stone-600 dark:text-stone-300'
+                      type='button'
+                      aria-label='Закрыть меню'
+                    >
+                      <XMarkIcon className='h-5 w-5' />
+                    </button>
+                  </div>
+
+                  <div className='mt-8 space-y-2'>
+                    {navItems.map((item) => (
+                      <a
+                        key={item.href}
+                        href={item.href}
                         onClick={() => setMobileMenuOpen(false)}
                         className='block rounded-2xl px-4 py-3 text-base font-semibold text-stone-900 transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/5'
                       >
-                        {user.isAdmin ? 'Админ статистика' : 'Статистика'}
-                      </Link>
-                      <Link
-                        href='/stats'
-                        onClick={() => setMobileMenuOpen(false)}
-                        className='block rounded-2xl px-4 py-3 text-base font-semibold text-stone-900 transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/5'
-                      >
-                        Моя статистика
-                      </Link>
-                      {user.isAdmin ? (
+                        {item.label}
+                      </a>
+                    ))}
+
+                    {user ? (
+                      <>
+                        <div className='rounded-2xl px-4 py-3 text-sm text-stone-500 dark:text-stone-400'>
+                          {`Аккаунт · ${user.username}`}
+                        </div>
                         <Link
-                          href='/admin'
+                          href={statsHref}
                           onClick={() => setMobileMenuOpen(false)}
                           className='block rounded-2xl px-4 py-3 text-base font-semibold text-stone-900 transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/5'
                         >
-                          Админ панель
+                          {user.isAdmin ? 'Админ статистика' : 'Статистика'}
                         </Link>
-                      ) : null}
-                      <button
-                        type='button'
-                        onClick={() => {
-                          void handleLogout();
-                        }}
-                        className='block w-full rounded-2xl px-4 py-3 text-left text-base font-semibold text-stone-900 transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/5'
+                        <Link
+                          href='/stats'
+                          onClick={() => setMobileMenuOpen(false)}
+                          className='block rounded-2xl px-4 py-3 text-base font-semibold text-stone-900 transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/5'
+                        >
+                          Моя статистика
+                        </Link>
+                        {user.isAdmin ? (
+                          <Link
+                            href='/admin'
+                            onClick={() => setMobileMenuOpen(false)}
+                            className='block rounded-2xl px-4 py-3 text-base font-semibold text-stone-900 transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/5'
+                          >
+                            Админ панель
+                          </Link>
+                        ) : null}
+                        <button
+                          type='button'
+                          onClick={() => {
+                            void handleLogout();
+                          }}
+                          className='block w-full rounded-2xl px-4 py-3 text-left text-base font-semibold text-stone-900 transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/5'
+                        >
+                          Выйти
+                        </button>
+                      </>
+                    ) : (
+                      <Link
+                        href='/auth'
+                        onClick={() => setMobileMenuOpen(false)}
+                        className='block rounded-2xl px-4 py-3 text-base font-semibold text-stone-900 transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/5'
                       >
-                        Выйти
-                      </button>
-                    </>
-                  ) : (
-                    <Link
-                      href='/auth'
-                      onClick={() => setMobileMenuOpen(false)}
-                      className='block rounded-2xl px-4 py-3 text-base font-semibold text-stone-900 transition-colors hover:bg-black/5 dark:text-white dark:hover:bg-white/5'
-                    >
-                      Вход
-                    </Link>
-                  )}
-                </div>
-              </Dialog.Panel>
+                        Вход
+                      </Link>
+                    )}
+                  </div>
+                </Dialog.Panel>
+              </motion.div>
             </div>
           </Dialog>
         ) : null}

@@ -22,20 +22,21 @@
 ## Обзор
 
 `FireStep` это монорепозиторий тренировочного проекта, в котором нативный клиент на Godot, backend на Go и общий слой
-gRPC-контрактов.
+gRPC-контрактов, а также веб-интерфейс.
 
 - `client/`: проект клиента на Godot 4, ассеты, сцены и C# gRPC-обвязка
 - `backend/`: Go gRPC сервер, доменные и прикладные слои, PostgreSQL-репозитории, миграции
 - `api/`: protobuf-контракты и Buf-конфигурация для генерации кода backend и C# клиента
-- `frontend/`: заготовка веб-фронтенда на Next.js
+- `web/`: фронтенд на Next.js 16 с API routes и серверным gRPC-мостом
 
 ## Текущее состояние
 
 - Нативный клиент собран как проект Godot 4 со сценарными сценами вроде briefing, control lab, evacuation, shutdown и
   debrief.
 - Backend использует Go, gRPC, `sqlc` и PostgreSQL, схема лежит в `backend/internal/migrations/`.
-- Сейчас в `api/` заведены контракты для `LoginService`, `UserService`, `SessionsService` и `SeancesService`.
+- Сейчас в `api/` заведены контракты для `LoginService`, `UserService`, `StatsService`, `SessionsService` и `SeancesService`.
 - В C#-клиенте уже есть сгенерированные gRPC-контракты и фабрика общего канала с дефолтным адресом backend в коде.
+- Веб-фронтенд находится в `web/` и уже включает auth, stats, admin и client session сценарии.
 
 ## Структура репозитория
 
@@ -44,7 +45,7 @@ FireStep/
 |-- api/                    # Protobuf-контракты и Buf generation
 |-- backend/                # Go gRPC backend и PostgreSQL-интеграция
 |-- client/                 # Godot-клиент, ассеты, сцены, C# bindings
-|-- frontend/               # Next.js frontend
+|-- web/                    # Next.js веб-фронтенд
 |-- .github/assets/         # Ассеты репозитория, включая иконку для README
 |-- README.md
 `-- README.ru.md
@@ -64,16 +65,34 @@ go run ./cmd/fire-stepd
 4. Если нужен веб-фронтенд, запустите его отдельно:
 
 ```bash
-cd frontend
+cd web
 npm install
 npm run dev
 ```
+
+Если backend доступен не по `127.0.0.1:8080`, перед запуском задайте `FIRESTEP_GRPC_ADDR`.
 
 5. После изменений в protobuf перегенерируйте контракты:
 
 ```bash
 cd api
 buf generate
+```
+
+## Docker
+
+Образ веб-фронтенда нужно собирать из корня репозитория, потому что Next.js-сервер читает protobuf-файлы из `api/`
+во время выполнения.
+
+```bash
+docker build -f web/Dockerfile -t fire-step-web .
+docker run --rm -p 3000:3000 -e FIRESTEP_GRPC_ADDR=host.docker.internal:8080 fire-step-web
+```
+
+Контейнер слушает порт из `PORT`, по умолчанию это `3000`, так что при необходимости порт можно поменять:
+
+```bash
+docker run --rm -p 8081:8081 -e PORT=8081 -e FIRESTEP_GRPC_ADDR=host.docker.internal:8080 fire-step-web
 ```
 
 ## Лицензия

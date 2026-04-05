@@ -1,0 +1,11 @@
+.git
+.github
+.idea
+**/node_modules
+**/.next
+**/.swc
+**/out
+**/coverage
+**/*.log
+client/.godot
+client/build
