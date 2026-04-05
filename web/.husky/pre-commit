@@ -1,6 +1,8 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-# Disable concurent to run build-types after ESLint in lint-staged
+# Run hooks from the web workspace even though Git hooks execute at repo root.
+cd web || exit 1
+
 npx lint-staged --concurrent false
-yarn test
+npm test

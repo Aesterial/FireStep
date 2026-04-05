@@ -52,6 +52,7 @@ func (u *User) Protobuf() *userpb.User {
 		Initials: u.Initials,
 		Email:    u.Email,
 		Org:      u.Organization,
+		Admin:    u.AdminAccess,
 		Joined:   timestamppb.New(u.Joined),
 	}
 }

@@ -13,7 +13,8 @@ message User {
   string initials = 3;
   string email = 4;
   string org = 5;
-  google.protobuf.Timestamp joined = 6;
+  bool admin = 6;
+  google.protobuf.Timestamp joined = 7;
 }
 
 message Users {

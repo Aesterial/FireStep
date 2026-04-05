@@ -29,7 +29,8 @@ type User struct {
 	Initials      string                 `protobuf:"bytes,3,opt,name=initials,proto3" json:"initials,omitempty"`
 	Email         string                 `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
 	Org           string                 `protobuf:"bytes,5,opt,name=org,proto3" json:"org,omitempty"`
-	Joined        *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=joined,proto3" json:"joined,omitempty"`
+	Admin         bool                   `protobuf:"varint,6,opt,name=admin,proto3" json:"admin,omitempty"`
+	Joined        *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=joined,proto3" json:"joined,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -99,6 +100,13 @@ func (x *User) GetOrg() string {
 	return ""
 }
 
+func (x *User) GetAdmin() bool {
+	if x != nil {
+		return x.Admin
+	}
+	return false
+}
+
 func (x *User) GetJoined() *timestamppb.Timestamp {
 	if x != nil {
 		return x.Joined
@@ -154,14 +162,15 @@ var File_xyz_fire_step_v1_user_domain_proto protoreflect.FileDescriptor
 
 const file_xyz_fire_step_v1_user_domain_proto_rawDesc = "" +
 	"\n" +
-	"\"xyz/fire-step/v1/user/domain.proto\x12\x15xyz.fire_step.v1.user\x1a\x1fgoogle/protobuf/timestamp.proto\"\xaa\x01\n" +
+	"\"xyz/fire-step/v1/user/domain.proto\x12\x15xyz.fire_step.v1.user\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc0\x01\n" +
 	"\x04User\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1a\n" +
 	"\busername\x18\x02 \x01(\tR\busername\x12\x1a\n" +
 	"\binitials\x18\x03 \x01(\tR\binitials\x12\x14\n" +
 	"\x05email\x18\x04 \x01(\tR\x05email\x12\x10\n" +
-	"\x03org\x18\x05 \x01(\tR\x03org\x122\n" +
-	"\x06joined\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\x06joined\"8\n" +
+	"\x03org\x18\x05 \x01(\tR\x03org\x12\x14\n" +
+	"\x05admin\x18\x06 \x01(\bR\x05admin\x122\n" +
+	"\x06joined\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\x06joined\"8\n" +
 	"\x05Users\x12/\n" +
 	"\x04list\x18\x01 \x03(\v2\x1b.xyz.fire_step.v1.user.UserR\x04listBqZNgithub.com/aesterial/fire-step/backend/internal/api/xyz/fire-step/v1/user;user\xaa\x02\x1eAesterial.FireStep.Api.V1.Userb\x06proto3"
 
