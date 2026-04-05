@@ -55,6 +55,16 @@ jest.mock('@headlessui/react', () => {
     return {Dialog};
 });
 
+jest.mock('next/router', () => ({
+    useRouter: () => ({
+        push: jest.fn(),
+        pathname: '/',
+        route: '/',
+        asPath: '/',
+        query: {},
+    }),
+}));
+
 import {render, screen} from '@testing-library/react';
 
 import Home from '../src/pages/index';
